@@ -14,9 +14,13 @@ import java.io.IOException;
 
 public class twitchJourney {
     public static void main(String[] args) {
-        TexturePool.getInstance().declareTexture("D:\\projects\\program\\DR07C.png", "mapTexture");
-        TexturePool.getInstance().declareTexture("D:\\projects\\program\\warrior_1.png", "warrior");
-        TexturePool.getInstance().declareTexture("D:\\projects\\program\\zombie_1.png", "zombie");
+        try {
+            TexturePool.getInstance().declareTexture("D:\\projects\\program\\DR07C.png", "mapTexture");
+            TexturePool.getInstance().declareTexture("D:\\projects\\program\\warrior_1.png", "warrior");
+            TexturePool.getInstance().declareTexture("D:\\projects\\program\\zombie_1.png", "zombie");
+        }catch (Exception e){
+            System.out.println(e);
+        }
 
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
@@ -26,7 +30,7 @@ public class twitchJourney {
         JoglCanvas canvas = new JoglCanvas(glcapabilities, 800, 500);
         JFrame frame = new JFrame("Mini JOGL Demo (breed)");
         frame.getContentPane().add(canvas, BorderLayout.CENTER);
-        frame.setSize(500, 500);
+        frame.setSize(1000, 1000);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         canvas.requestFocus();
