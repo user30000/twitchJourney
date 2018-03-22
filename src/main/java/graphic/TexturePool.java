@@ -41,8 +41,6 @@ public class TexturePool {
                 }
                 //return TextureIO.newTexture(data);
             } catch (IOException exc) {
-                exc.printStackTrace();
-                System.exit(1);
             }
         });
         //return null;
