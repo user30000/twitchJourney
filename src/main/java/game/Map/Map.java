@@ -10,13 +10,14 @@ public class Map implements Drawable {
     private int size;
     private Tile[][] tiles;
     private int[][] heightMap;
+    private Random r;
 
     Random r;
 
     public Map(int size) {
         this.size = size;
 
-         r = new Random();
+        r = new Random();
 
         heightMap = new int[size][size];
         heightMap[0][0] = 0;//r.nextInt(128);
@@ -42,7 +43,7 @@ public class Map implements Drawable {
             return;
         int noise = Math.min(diff, 64);
         if (heightMap[(i3 + i1) / 2][(i4 + i2) / 2] == 0) {
-            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (new Random().nextInt(noise) - noise/2);//center
+            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise/2);//center
         }
         if (heightMap[i1][(i4 + i2) / 2] == 0) {
             heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise/2);//bottom
