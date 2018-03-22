@@ -3,7 +3,6 @@ package game.creatures;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import game.Game;
 import game.GameEventListener;
 import game.Tickable;
@@ -26,7 +25,6 @@ public class Creature implements Tickable, Drawable, target {
 
     }
 
-    //private final Game game;
     protected enum machineState {IDLE, ATTACK, MOVE}
 
     private machineState State = machineState.IDLE;
@@ -142,7 +140,7 @@ public class Creature implements Tickable, Drawable, target {
         if(gameEventListener == null)
             return;
 
-        ArrayList<Player> players = (ArrayList<Player>) ((Game)gameEventListener).getPlayersList();
+        ArrayList<Player> players = new ArrayList(((Game)gameEventListener).getPlayersList());
 
         if(Target == null) {
             for (Player p : players) {
