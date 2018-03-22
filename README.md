@@ -1,2 +1,3 @@
-"# twitchJourney" 
-"# twitchJourney" 
+# twitchJourney
+
+Zero player game with twitch support
