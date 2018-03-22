@@ -12,6 +12,8 @@ public class Map implements Drawable {
     private int[][] heightMap;
     private Random r;
 
+    Random r;
+
     public Map(int size) {
         this.size = size;
 
@@ -31,9 +33,7 @@ public class Map implements Drawable {
             for (int j = 0; j < size; j++) {
                 Tile t = new Tile(heightMap[i][j]);
                 tiles[i][j] = t;
-                //System.out.print(tiles[i][j].getHeight() + "  ");
             }
-            //System.out.println();
         }
     }
 
@@ -71,7 +71,6 @@ public class Map implements Drawable {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 float h = tiles[j][i].getHeight();
-                //gl.glColor3f(h / 128, h / 128, h / 128);
 
                 switch (tiles[j][i].getType()) {
                     case 0:
@@ -87,9 +86,6 @@ public class Map implements Drawable {
                         gl.glColor3f(0f, 0f, (h + 64) / 128);
                         break;
                 }
-
-                //gl.glBegin(GL2.GL_POLYGON);
-                //gl.glEnable(GL2.GL_TEXTURE_2D);
 
                 gl.glTexCoord2f(0.0625f, 1);
                 gl.glVertex2i(i, j);
@@ -109,10 +105,6 @@ public class Map implements Drawable {
 
                 gl.glTexCoord2f(0, 1 - 0.0625f);
                 gl.glVertex2i(i - 1, j - 1);
-                //gl.glTexCoord2f(0, 1);
-                //gl.glVertex2i(i - 1, j);
-
-                //gl.glEnd();
             }
         }
         gl.glEnd();

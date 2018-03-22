@@ -25,7 +25,6 @@ public class Creature implements Tickable, Drawable, target {
 
     }
 
-    //private final Game game;
     protected enum machineState {IDLE, ATTACK, MOVE}
 
     private machineState State = machineState.IDLE;
@@ -141,7 +140,7 @@ public class Creature implements Tickable, Drawable, target {
         if(gameEventListener == null)
             return;
 
-        ArrayList<Player> players = (ArrayList<Player>) ((Game)gameEventListener).getPlayersList();
+        ArrayList<Player> players = new ArrayList(((Game)gameEventListener).getPlayersList());
 
         if(Target == null) {
             for (Player p : players) {
