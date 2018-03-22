@@ -10,11 +10,12 @@ public class Map implements Drawable {
     private int size;
     private Tile[][] tiles;
     private int[][] heightMap;
+    private Random r;
 
     public Map(int size) {
         this.size = size;
 
-        Random r = new Random();
+        r = new Random();
 
         heightMap = new int[size][size];
         heightMap[0][0] = 0;//r.nextInt(128);
@@ -42,19 +43,19 @@ public class Map implements Drawable {
             return;
         int noise = Math.min(diff, 64);
         if (heightMap[(i3 + i1) / 2][(i4 + i2) / 2] == 0) {
-            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (new Random().nextInt(noise) - noise/2);//center
+            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise/2);//center
         }
         if (heightMap[i1][(i4 + i2) / 2] == 0) {
-            heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (new Random().nextInt(noise) - noise/2);//bottom
+            heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise/2);//bottom
         }
         if (heightMap[i3][(i4 + i2) / 2] == 0) {
-            heightMap[i3][(i4 + i2) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (new Random().nextInt(noise) - noise/2);//top
+            heightMap[i3][(i4 + i2) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise/2);//top
         }
         if (heightMap[(i3 + i1) / 2][i2] == 0) {
-            heightMap[(i3 + i1) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (new Random().nextInt(noise) - noise/2);//left
+            heightMap[(i3 + i1) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (r.nextInt(noise) - noise/2);//left
         }
         if (heightMap[(i3 + i1) / 2][i4] == 0) {
-            heightMap[(i3 + i1) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (new Random().nextInt(noise) - noise/2);//right
+            heightMap[(i3 + i1) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise/2);//right
         }
 
         generate(i1, i2, i3 - diff/2, i4 - diff/2);//низ лево
