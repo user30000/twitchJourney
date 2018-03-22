@@ -8,6 +8,7 @@ import graphic.graphListener;
 import jogamp.opengl.gl4.GL4bcImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -15,8 +16,8 @@ public class Game implements Runnable, GameEventListener {
     //chatConnector;
     int counter = 0;
 
-    private ArrayList<Player> players;
-    private ArrayList<Creature> creatures;
+    private List<Player> players;
+    private List<Creature> creatures;
     private final outMessageListener chat;
     private graphListener gListener;
     private Map gameMap;
@@ -24,9 +25,8 @@ public class Game implements Runnable, GameEventListener {
     private boolean lock = false;
 
     public Game(outMessageListener chatListener) {
-        players = new ArrayList<Player>();
-                //.synchronizedList(new ArrayList<Player>());
-        creatures = new ArrayList<>();
+        players = Collections.synchronizedList(new ArrayList<Player>());
+        creatures = Collections.synchronizedList(new ArrayList<Creature>());
         chat = chatListener;
 
         gameMap = new Map(65);
