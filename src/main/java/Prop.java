@@ -16,18 +16,10 @@ public class Prop {
             while (e.hasMoreElements()) {
                 String key = (String) e.nextElement();
                 String value = properties.getProperty(key);
-                System.out.println("Key : " + key + ", Value : " + value);
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Не обнаружен файл config.properties");
         }
-    }
-
-    public static Prop getInstance() {
-        if (instance == null) {
-            instance = new Prop();
-        }
-        return instance;
     }
 
     static String getProp(String key){
