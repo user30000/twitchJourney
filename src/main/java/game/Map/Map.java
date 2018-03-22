@@ -10,7 +10,6 @@ public class Map implements Drawable {
     private int size;
     private Tile[][] tiles;
     private int[][] heightMap;
-    private Random r;
 
     Random r;
 
