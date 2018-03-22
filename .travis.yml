@@ -1,0 +1,9 @@
+language: java
+
+sudo: false
+
+os:
+  - linux
+
+jdk:
+  - openjdk8
