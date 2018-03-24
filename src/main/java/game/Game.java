@@ -6,6 +6,7 @@ import game.creatures.Creature;
 import game.creatures.Player;
 import graphic.graphListener;
 import jogamp.opengl.gl4.GL4bcImpl;
+import util.Prop;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,8 @@ public class Game implements Runnable, GameEventListener {
         creatures = Collections.synchronizedList(new ArrayList<Creature>());
         chat = chatListener;
 
-        gameMap = new Map(65);
+        String mapSize = Prop.getProp("mapSize");
+        gameMap = new Map(Integer.parseInt(mapSize));
     }
 
     private void AddCreature(String Name) {

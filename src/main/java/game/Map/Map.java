@@ -19,12 +19,11 @@ public class Map implements Drawable {
         r = new Random();
 
         heightMap = new int[size][size];
-        heightMap[0][0] = 0;//r.nextInt(128);
-        heightMap[0][size - 1] = 30;//r.nextInt(128);
-        heightMap[size - 1][0] = 30;//r.nextInt(128);
-        heightMap[size - 1][size - 1] = 30;//r.nextInt(128);
-        //heightMap[size/2][size/2] = 128;
+        heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] = heightMap[size - 1][size - 1] = 30;//r.nextInt(128);
+        heightMap[size / 2 - 1][0] = 128;
 
+        generateVerticalBorders(0, size - 1);
+        generateHorizontalBorders(0, size - 1);
         generate(0, 0, size - 1, size - 1);
 
         tiles = new Tile[size][size];
@@ -36,31 +35,59 @@ public class Map implements Drawable {
         }
     }
 
+    private void generateVerticalBorders(int x, int y) {
+        int diff = y - x;
+        if (diff <= 1) {
+            return;
+        }
+        int noise = Math.min(diff, 64);
+
+        if (heightMap[0][(x + y) / 2] == 0) {
+            heightMap[size - 1][(x + y) / 2] = heightMap[0][(x + y) / 2] = (heightMap[0][x] + heightMap[0][y]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
+        }
+        generateVerticalBorders(x, (y + x) / 2);
+        generateVerticalBorders((y + x) / 2, y);
+    }
+
+    private void generateHorizontalBorders(int x, int y) {
+        int diff = y - x;
+        if (diff <= 1) {
+            return;
+        }
+        int noise = Math.min(diff, 64);
+
+        if (heightMap[(x + y) / 2][0] == 0) {
+            heightMap[(x + y) / 2][size - 1] = heightMap[(x + y) / 2][0] = (heightMap[x][0] + heightMap[y][0]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
+        }
+        generateHorizontalBorders(x, (y + x) / 2);
+        generateHorizontalBorders((y + x) / 2, y);
+    }
+
     private void generate(int i1, int i2, int i3, int i4) {
         int diff = i3 - i1;
-        if(diff <= 1)
+        if (diff <= 1)
             return;
         int noise = Math.min(diff, 64);
         if (heightMap[(i3 + i1) / 2][(i4 + i2) / 2] == 0) {
-            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise/2);//center
+            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise / 2);//center
         }
         if (heightMap[i1][(i4 + i2) / 2] == 0) {
-            heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise/2);//bottom
+            heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
         }
         if (heightMap[i3][(i4 + i2) / 2] == 0) {
-            heightMap[i3][(i4 + i2) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise/2);//top
+            heightMap[i3][(i4 + i2) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//top
         }
         if (heightMap[(i3 + i1) / 2][i2] == 0) {
-            heightMap[(i3 + i1) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (r.nextInt(noise) - noise/2);//left
+            heightMap[(i3 + i1) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (r.nextInt(noise) - noise / 2);//left
         }
         if (heightMap[(i3 + i1) / 2][i4] == 0) {
-            heightMap[(i3 + i1) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise/2);//right
+            heightMap[(i3 + i1) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//right
         }
 
-        generate(i1, i2, i3 - diff/2, i4 - diff/2);//низ лево
-        generate(i1 + diff/2, i2, i3, i4 - diff/2);//верх лево
-        generate(i1, i2 + diff/2, i3 - diff/2, i4);//низ право
-        generate(i1 + diff/2, i2 + diff/2, i3, i4);//верх право
+        generate(i1, i2, i3 - diff / 2, i4 - diff / 2);//низ лево
+        generate(i1 + diff / 2, i2, i3, i4 - diff / 2);//верх лево
+        generate(i1, i2 + diff / 2, i3 - diff / 2, i4);//низ право
+        generate(i1 + diff / 2, i2 + diff / 2, i3, i4);//верх право
 
     }
 
