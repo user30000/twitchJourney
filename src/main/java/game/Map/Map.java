@@ -1,24 +1,27 @@
 package game.Map;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import graphic.Drawable;
+import util.Prop;
 
 import java.util.Random;
 
 public class Map implements Drawable {
     private int size;
-    private Tile[][] tiles;
+    private int chunkSize;
+    private Chunk[][] chunks;
     private int[][] heightMap;
 
-    Random r;
+    private Random r;
 
     public Map(int size) {
         this.size = size;
-
-        r = new Random();
+        chunkSize = Integer.parseInt(Prop.getProp("chunkSize"));
+        r = new Random(500);
 
         heightMap = new int[size][size];
+        chunks = new Chunk[size / chunkSize][size / chunkSize];
+
         heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] = heightMap[size - 1][size - 1] = 30;//r.nextInt(128);
         heightMap[size / 2 - 1][0] = 128;
 
@@ -26,11 +29,9 @@ public class Map implements Drawable {
         generateHorizontalBorders(0, size - 1);
         generate(0, 0, size - 1, size - 1);
 
-        tiles = new Tile[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                Tile t = new Tile(heightMap[i][j]);
-                tiles[i][j] = t;
+        for (int i = 0; i < size / chunkSize; i++) {
+            for (int j = 0; j < size / chunkSize; j++) {
+                chunks[i][j] = getChunk(i, j);
             }
         }
     }
@@ -91,48 +92,22 @@ public class Map implements Drawable {
 
     }
 
-    @Override
-    public void Draw(GL2 gl) {
-        gl.glBegin(GL.GL_TRIANGLES);
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                float h = tiles[j][i].getHeight();
-
-                switch (tiles[j][i].getType()) {
-                    case 0:
-                        gl.glColor3f((h + 64) / 128, (h + 64) / 128, 0f);
-                        break;
-                    case 1:
-                        gl.glColor3f(h / 128, h / 128, h / 128);
-                        break;
-                    case 2:
-                        gl.glColor3f(0f, h / 128, 0f);
-                        break;
-                    case 3:
-                        gl.glColor3f(0f, 0f, (h + 64) / 128);
-                        break;
-                }
-
-                gl.glTexCoord2f(0.0625f, 1);
-                gl.glVertex2i(i, j);
-
-                gl.glTexCoord2f(0.0625f, 1 - 0.0625f);
-                gl.glVertex2i(i, j - 1);
-
-                gl.glTexCoord2f(0, 1 - 0.0625f);
-                gl.glVertex2i(i - 1, j - 1);
-
-
-                gl.glTexCoord2f(0.0625f, 1);
-                gl.glVertex2i(i, j);
-
-                gl.glTexCoord2f(0, 1);
-                gl.glVertex2i(i - 1, j);
-
-                gl.glTexCoord2f(0, 1 - 0.0625f);
-                gl.glVertex2i(i - 1, j - 1);
+    private Chunk getChunk(int x, int y) {
+        Tile[][] tile = new Tile[chunkSize][chunkSize];
+        for (int i = 0; i < chunkSize; i++) {
+            for (int j = 0; j < chunkSize; j++) {
+                tile[i][j] = new Tile(heightMap[x * chunkSize + i][y * chunkSize + j]);
             }
         }
-        gl.glEnd();
+        return new Chunk(x, y, tile);
+    }
+
+    @Override
+    public void Draw(GL2 gl) {
+        for (Chunk[] chunk : chunks) {
+            for (int j = 0; j < chunks.length; j++) {
+                chunk[j].Draw(gl);
+            }
+        }
     }
 }
