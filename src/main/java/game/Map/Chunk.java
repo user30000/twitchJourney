@@ -5,11 +5,14 @@ import com.jogamp.opengl.GL2;
 import graphic.Drawable;
 import util.Prop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Chunk implements Drawable {
     private int size;
     private int posX;
     private int posY;
-    private Tile[][] tiles;
+    public Tile[][] tiles;
 
     public Chunk(int x, int y, Tile[][] tileSet) {
         size = Integer.parseInt(Prop.getProp("chunkSize"));
@@ -21,7 +24,30 @@ public class Chunk implements Drawable {
         tiles = new Tile[size][size];
         for (int i = 0; i < size; i++) {
             System.arraycopy(tileSet[i], 0, tiles[i], 0, size);
+            int j = 0;
+            for (Tile tile : tiles[i]) {
+                tile.setParentChunk(this);
+                tile.setPosition(i,j);
+                j++;
+            }
         }
+    }
+
+    public List getNeighbors(int x, int y) {
+        ArrayList<Tile> neighbors = new ArrayList<>();
+        if (x != 0 && tiles[x - 1][y].reachable) {
+            neighbors.add(tiles[x - 1][y]);
+        }
+        if (y != 0 && tiles[x][y - 1].reachable) {
+            neighbors.add(tiles[x][y - 1]);
+        }
+        if (x != size - 1 && tiles[x + 1][y].reachable) {
+            neighbors.add(tiles[x + 1][y]);
+        }
+        if (y != size - 1 && tiles[x][y + 1].reachable) {
+            neighbors.add(tiles[x][y + 1]);
+        }
+        return neighbors;
     }
 
     @Override
