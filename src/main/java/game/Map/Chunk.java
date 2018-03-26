@@ -35,16 +35,16 @@ public class Chunk implements Drawable {
 
     public List getNeighbors(int x, int y) {
         ArrayList<Tile> neighbors = new ArrayList<>();
-        if (x != 0 && tiles[x - 1][y].reachable) {
+        if (x != 0) {
             neighbors.add(tiles[x - 1][y]);
         }
-        if (y != 0 && tiles[x][y - 1].reachable) {
+        if (y != 0) {
             neighbors.add(tiles[x][y - 1]);
         }
-        if (x != size - 1 && tiles[x + 1][y].reachable) {
+        if (x != size - 1) {
             neighbors.add(tiles[x + 1][y]);
         }
-        if (y != size - 1 && tiles[x][y + 1].reachable) {
+        if (y != size - 1) {
             neighbors.add(tiles[x][y + 1]);
         }
         return neighbors;
