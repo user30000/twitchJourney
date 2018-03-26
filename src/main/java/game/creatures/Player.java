@@ -17,7 +17,7 @@ public class Player extends Creature implements target {
     private int ExpForlevel = 100;
 
     private Player(int MaxHealth, String nickName) {
-        super(MaxHealth);
+        super(MaxHealth, "Player", nickName);
         NickName = nickName.toLowerCase();
         Level = 1;
     }
