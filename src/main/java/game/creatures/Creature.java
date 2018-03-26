@@ -52,11 +52,15 @@ public class Creature implements Tickable, Drawable, target {
 
     protected target Target = null;
 
+    protected String Type;
+    protected int Age = 0;
     protected boolean dead = false;
 
-    public Creature(int MaxHealth){
+    public Creature(int MaxHealth, String Type, String NickName){
         this.MaxHealth = MaxHealth;
         this.Health = MaxHealth;
+        this.Type = Type;
+        this.name = NickName;
 
         position = new Point();
 
@@ -74,6 +78,18 @@ public class Creature implements Tickable, Drawable, target {
 
     public String getName(){
         return name;
+    }
+
+    public boolean isPlayer() {
+        return this.Type.equals("Player");
+    }
+
+    public String toFullString() {
+        return this.Type + " " + this.name + " в возрасте " + this.Age + " лет";
+    }
+
+    public String toString() {
+        return this.Type + " " + this.name;
     }
 
     public void getDamage(int dmg){
@@ -122,6 +138,7 @@ public class Creature implements Tickable, Drawable, target {
 
     @Override
     public void Tick() {
+        this.Age++;
         switch (State){
             case IDLE:
                 Idle();
