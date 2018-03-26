@@ -12,6 +12,7 @@ import graphic.TexturePool;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Creature implements Tickable, Drawable, target {
@@ -68,10 +69,6 @@ public class Creature implements Tickable, Drawable, target {
         position.y = 30 + new Random().nextInt(30) - 15;
     }
 
-    public void setName(String name){
-        this.name = name;
-    }
-
     public void setTextureName(String textureName){
         this.textureName = textureName;
     }
@@ -102,12 +99,10 @@ public class Creature implements Tickable, Drawable, target {
     }
 
     public int attack(){
+        int dmg = 0;
         if(Target == null){
             State = machineState.IDLE;
-        }
-
-        int dmg = 0;
-        if (Target.getPosition().distance(position) > 10) {
+        } else if (Target.getPosition().distance(position) > 10) {
             Target = null;
             State = machineState.IDLE;
         }
@@ -157,10 +152,10 @@ public class Creature implements Tickable, Drawable, target {
         if(gameEventListener == null)
             return;
 
-        ArrayList<Player> players = new ArrayList(((Game)gameEventListener).getPlayersList());
+        List<Creature> players = ((Game)gameEventListener).getPlayersList();
 
         if(Target == null) {
-            for (Player p : players) {
+            for (Creature p : players) {
                 int distance = ((int) p.getPosition().distance(position));
                 if (distance < sightRange){
                     Target = p;

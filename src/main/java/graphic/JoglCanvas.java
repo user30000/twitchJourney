@@ -24,9 +24,6 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
     static float blue = 1;
     static float green = 0;
 
-    //private Texture texture;
-    //private Texture warrior;
-
     public JoglCanvas(GLCapabilities capabilities, int width, int height) {
         super(capabilities);
         setSize(width, height);

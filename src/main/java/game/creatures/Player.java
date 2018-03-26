@@ -48,13 +48,6 @@ public class Player extends Creature implements target {
     }
 
     @Override
-    public void die(){
-        //dead = true;
-        //gameEventListener = null;
-        super.die();
-    }
-
-    @Override
     public void Tick() {
         //getDamage(new Random().nextInt(5));
     }

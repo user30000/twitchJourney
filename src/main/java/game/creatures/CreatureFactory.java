@@ -1,7 +1,7 @@
 package game.creatures;
 
 import chatBot.outMessageListener;
-import game.GameData;
+import game.GameEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,13 @@ public class CreatureFactory {
     private int playerCount = 0;
     private int creatureCount = 0;
     private int counterTick = 0;
-    private GameData data;
     private final outMessageListener chat;
 
-    public CreatureFactory(GameData data, outMessageListener outMsg) {
-        this.data = data;
+    public CreatureFactory(outMessageListener outMsg) {
         chat = outMsg;
     }
 
-    public void SavePopulationPlayer() {
+    public void SavePopulationPlayer(Map<String, Creature> creatures, GameEventListener listener) {
         counterTick++;
 
         List<Creature> added = new ArrayList<>();
@@ -35,7 +33,8 @@ public class CreatureFactory {
 
         added.forEach((c) -> {
             chat.Write("Родился: " + c.toString());
-            this.data.getCreatures().put(c.getName(), c);
+            creatures.put(c.getName(), c);
+            c.setGameEventListener(listener);
         });
 
         if (counterTick == 5) {
@@ -43,28 +42,33 @@ public class CreatureFactory {
         }
     }
 
+    public void CleanDead(Map<String, Creature> creatures) {
+        creatures.entrySet().removeIf(e -> {
+            Creature c = e.getValue();
+            if(c.isDead()) {
+                if (c.isPlayer()) {
+                    playerCount--;
+                } else {
+                    creatureCount--;
+                }
+                chat.Write("Умер: " + c.toFullString());
+                return true;
+            }
+            return false;
+        });
+    }
+
     private Creature createPlayer() {
+        playerCount++;
         String Name = "Чувачок" + String.valueOf(new Random().nextInt());
         return new Player(Name);
     }
 
     private Creature createCreature() {
         String Name = "Монстряш" + String.valueOf(new Random().nextInt());
+        creatureCount++;
         Creature c = new Creature(15, "zombie", Name);
         c.setTextureName("zombie");
         return c;
-    }
-
-    public void Kill(String nickname) {
-        Map<String, Creature> creatures = data.getCreatures();
-        Creature removed = creatures.remove(nickname);
-        if ( removed != null) {
-            if(removed.isPlayer()) {
-                this.playerCount--;
-            } else {
-                this.creatureCount--;
-            }
-            chat.Write("Убит: " + removed.toFullString());
-        }
     }
 }
