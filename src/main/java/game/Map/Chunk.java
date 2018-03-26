@@ -3,6 +3,7 @@ package game.Map;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import graphic.Drawable;
+import util.Direction;
 import util.Prop;
 
 import java.util.ArrayList;
@@ -12,6 +13,12 @@ public class Chunk implements Drawable {
     private int size;
     private int posX;
     private int posY;
+
+    Chunk upNeighbor;
+    Chunk downNeighbor;
+    Chunk rightNeighbor;
+    Chunk leftNeighbor;
+
     public Tile[][] tiles;
 
     public Chunk(int x, int y, Tile[][] tileSet) {
@@ -30,6 +37,15 @@ public class Chunk implements Drawable {
                 tile.setPosition(i,j);
                 j++;
             }
+        }
+    }
+
+    public void setNeighborChunk(Chunk chunk, Direction direction){
+        switch (direction){
+            case UP: upNeighbor = chunk; break;
+            case DOWN: downNeighbor = chunk; break;
+            case LEFT: leftNeighbor = chunk; break;
+            case RIGHT: rightNeighbor = chunk; break;
         }
     }
 
