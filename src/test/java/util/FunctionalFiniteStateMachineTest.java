@@ -6,34 +6,52 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class FunctionalFiniteStateMachineTest extends FunctionalFiniteStateMachine {
+    private boolean step1 = true;
+    private boolean step2 = true;
     public FunctionalFiniteStateMachineTest() {
         // Start state
         super("state1");
     }
 
     @Test
-    public void run() {
-        // state1
-        super.run();
-        // state2
-        super.run();
-        // state1
-        super.run();
-        // state2
+    public void step() {
+        assertEquals("state1", super.getState());
+        super.step();
         assertEquals("state2", super.getState());
+        super.step();
+        assertEquals("state1", super.getState());
+        super.step();
+        assertEquals("state3", super.getState());
+        super.step();
+        assertEquals("state3", super.getState());
+        super.step();
+        assertEquals("state3", super.getState());
     }
 
-    public String state1() {
-        assertEquals("state1", this.getState());
-
-        // Change state1 to state2
-        return "state2";
+    public Do state1() {
+        if(step1) {
+            return Do.swap_to("state2");
+        } else {
+            System.out.println(1);
+            return Do.swap_to("state3");
+        }
     }
 
-    public String state2() {
-        assertEquals("state2", this.getState());
+    public Do state2() {
+        step1 = false;
+        return Do.swap_to("state1");
+    }
 
-        // Change state2 to state1
-        return "state1";
+    public Do state3() {
+        if (step2) {
+            step2 = false;
+            return Do.nothing();
+        } else {
+            return Do.swap_and_do("state4");
+        }
+    }
+
+    public Do state4() {
+        return Do.swap_and_do("state1");
     }
 }
