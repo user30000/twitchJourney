@@ -6,12 +6,8 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
 import game.GameEventListener;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class JoglCanvas extends GLCanvas implements GLEventListener, graphListener {
@@ -29,11 +25,11 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         setSize(width, height);
         addGLEventListener(this);
 
-        vertexes =  new ArrayList<>();
-        vertexes.add(new myVertex(5,5));
-        vertexes.add(new myVertex(5,-5));
-        vertexes.add(new myVertex(-5,5));
-        vertexes.add(new myVertex(-5,-5));
+        vertexes = new ArrayList<>();
+        vertexes.add(new myVertex(5, 5));
+        vertexes.add(new myVertex(5, -5));
+        vertexes.add(new myVertex(-5, 5));
+        vertexes.add(new myVertex(-5, -5));
     }
 
     public void init(GLAutoDrawable drawable) {
@@ -47,7 +43,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         gl.glViewport(0, 0, 500, 300);
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluOrtho2D(-1, 65, -1.0, 65);
+        glu.gluOrtho2D(-1, 64, -1.0, 64);
 
         gl.glClearDepth(5.0f); // Set depth's clear-value to farthest
         gl.glEnable(GL2.GL_DEPTH_TEST); // Enables depth-buffer for hidden
@@ -86,13 +82,13 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-        Texture t =  TexturePool.getInstance().getTexture("mapTexture");
-        if(t!=null) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D,t.getTextureObject());
+        Texture t = TexturePool.getInstance().getTexture("mapTexture");
+        if (t != null) {
+            gl.glBindTexture(GL.GL_TEXTURE_2D, t.getTextureObject());
         }
 
         //gl.glBegin(GL.GL_TRIANGLES);
-        if(gameEventListener != null) {
+        if (gameEventListener != null) {
             gameEventListener.GameEvent(gl, "");
         }
         //gl.glEnd();
@@ -105,7 +101,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         // Perspective.
         float widthHeightRatio = (float) getWidth() / (float) getHeight();
-        glu.gluPerspective(45, widthHeightRatio, 1, 1000);
+        glu.gluPerspective(45, 1, 1, 100);
         glu.gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
 
         // Change back to model view matrix.
@@ -113,26 +109,13 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         gl.glLoadIdentity();
     }
 
-    public static Texture loadTexture(GL2 gl, File file, String extension)
-    {
-        try {
-            TextureData data = TextureIO.newTextureData(gl.getGLProfile(), file, false, extension);
-            return TextureIO.newTexture(data);
-        }
-        catch (IOException exc) {
-            exc.printStackTrace();
-            System.exit(1);
-        }
-        return null;
-    }
-
     public GL2 getGl() throws Exception {
-        if(gl != null)
+        if (gl != null)
             return gl;
         else throw new Exception("GL не был инициализирован");
     }
 
-    public void setGameEventListener(GameEventListener listener){
+    public void setGameEventListener(GameEventListener listener) {
         this.gameEventListener = listener;
     }
 
@@ -141,13 +124,16 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         red = 0;
         blue = 0;
         green = 0;
-        switch (command){
-            case "red": red = 1f;
-            break;
-            case "blue": blue = 1f;
-            break;
-            case "green": green = 1f;
-            break;
+        switch (command) {
+            case "red":
+                red = 1f;
+                break;
+            case "blue":
+                blue = 1f;
+                break;
+            case "green":
+                green = 1f;
+                break;
         }
     }
 }

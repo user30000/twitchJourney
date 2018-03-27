@@ -5,6 +5,7 @@ import game.Game;
 import graphic.JoglCanvas;
 import graphic.TexturePool;
 import org.jibble.pircbot.IrcException;
+import util.Prop;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ public class twitchJourney {
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\DR07C.png", "mapTexture");
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\warrior_1.png", "warrior");
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\zombie_1.png", "zombie");
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 

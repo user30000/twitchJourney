@@ -15,9 +15,8 @@ public class Prop {
             URL u = getClass().getResource("/config.properties");
             InputStream input;
             if (u != null) {
-                 input = getClass().getClassLoader().getResourceAsStream("config.properties");
-            }
-            else{
+                input = getClass().getClassLoader().getResourceAsStream("config.properties");
+            } else {
                 input = getClass().getClassLoader().getResourceAsStream("public.properties");
             }
 
@@ -33,7 +32,7 @@ public class Prop {
         }
     }
 
-    public static String getProp(String key){
+    public static String getProp(String key) {
         if (instance == null) {
             instance = new Prop();
         }

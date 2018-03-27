@@ -1,8 +1,11 @@
 package game.Map;
 
+import util.Direction;
+
+import java.util.LinkedList;
 import java.util.List;
 
-class Tile extends AStarNode {
+public class Tile extends AStarNode {
     private int type;
     private int height;
     private int weight;
@@ -11,7 +14,12 @@ class Tile extends AStarNode {
     public int posX;
     public int posY;
 
-    public boolean reachable = true;
+    private Tile upNeighbor;
+    private Tile downNeighbor;
+    private Tile rightNeighbor;
+    private Tile leftNeighbor;
+
+    private boolean reachable = true;
 
     private Chunk parentChunk;
 
@@ -34,6 +42,23 @@ class Tile extends AStarNode {
         visits = 0;
     }
 
+    public void setNeighborTile(Tile tile, Direction direction) {
+        switch (direction) {
+            case UP:
+                upNeighbor = tile;
+                break;
+            case DOWN:
+                downNeighbor = tile;
+                break;
+            case LEFT:
+                leftNeighbor = tile;
+                break;
+            case RIGHT:
+                rightNeighbor = tile;
+                break;
+        }
+    }
+
     int getType() {
         return type;
     }
@@ -42,6 +67,10 @@ class Tile extends AStarNode {
 
     float getHeight() {
         return height;
+    }
+
+    public boolean isReachable() {
+        return reachable;
     }
 
     void setParentChunk(Chunk chunk) {
@@ -65,6 +94,11 @@ class Tile extends AStarNode {
 
     @Override
     public List getNeighbors() {
-        return parentChunk.getNeighbors(posX, posY);
+        LinkedList<Tile> neighbors = new LinkedList<>();
+        neighbors.add(upNeighbor);
+        neighbors.add(downNeighbor);
+        neighbors.add(leftNeighbor);
+        neighbors.add(rightNeighbor);
+        return neighbors;// parentChunk.getNeighbors(posX, posY);
     }
 }

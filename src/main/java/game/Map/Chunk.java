@@ -6,64 +6,91 @@ import graphic.Drawable;
 import util.Direction;
 import util.Prop;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Chunk implements Drawable {
     private int size;
     private int posX;
     private int posY;
 
-    Chunk upNeighbor;
-    Chunk downNeighbor;
-    Chunk rightNeighbor;
-    Chunk leftNeighbor;
+    private Chunk upNeighbor;
+    private Chunk downNeighbor;
+    private Chunk rightNeighbor;
+    private Chunk leftNeighbor;
 
-    public Tile[][] tiles;
+    private Tile[][] tiles;
 
-    public Chunk(int x, int y, Tile[][] tileSet) {
+    public Chunk(int x, int y) {
         size = Integer.parseInt(Prop.getProp("chunkSize"));
-        if (tileSet.length != size) {
-            System.out.println("Не совпадают размеры чанок");
-        }
         posX = x;
         posY = y;
+    }
+
+    public void setTiles(Tile[][] tileSet) {
         tiles = new Tile[size][size];
         for (int i = 0; i < size; i++) {
             System.arraycopy(tileSet[i], 0, tiles[i], 0, size);
             int j = 0;
             for (Tile tile : tiles[i]) {
                 tile.setParentChunk(this);
-                tile.setPosition(i,j);
+                tile.setPosition(i, j);
                 j++;
+            }
+        }
+
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles.length; j++) {
+                if (i != tiles.length - 1) {
+                    tiles[i][j].setNeighborTile(tiles[i + 1][j], Direction.RIGHT);
+                } else {
+                    tiles[i][j].setNeighborTile(tiles[0][j], Direction.RIGHT);
+                }
+                if (i != 0) {
+                    tiles[i][j].setNeighborTile(tiles[i - 1][j], Direction.LEFT);
+                } else {
+                    tiles[i][j].setNeighborTile(tiles[tiles.length - 1][j], Direction.LEFT);
+                }
+                if (j != tiles.length - 1) {
+                    tiles[i][j].setNeighborTile(tiles[i][j + 1], Direction.DOWN);
+                } else {
+                    tiles[i][j].setNeighborTile(tiles[i][0], Direction.DOWN);
+                }
+                if (j != 0) {
+                    tiles[i][j].setNeighborTile(tiles[i][j - 1], Direction.UP);
+                } else {
+                    tiles[i][j].setNeighborTile(tiles[i][tiles.length - 1], Direction.UP);
+                }
             }
         }
     }
 
-    public void setNeighborChunk(Chunk chunk, Direction direction){
-        switch (direction){
-            case UP: upNeighbor = chunk; break;
-            case DOWN: downNeighbor = chunk; break;
-            case LEFT: leftNeighbor = chunk; break;
-            case RIGHT: rightNeighbor = chunk; break;
+    public void setNeighborChunk(Chunk chunk, Direction direction) {
+        switch (direction) {
+            case UP:
+                upNeighbor = chunk;
+                break;
+            case DOWN:
+                downNeighbor = chunk;
+                break;
+            case LEFT:
+                leftNeighbor = chunk;
+                break;
+            case RIGHT:
+                rightNeighbor = chunk;
+                break;
         }
     }
 
-    public List getNeighbors(int x, int y) {
-        ArrayList<Tile> neighbors = new ArrayList<>();
-        if (x != 0) {
-            neighbors.add(tiles[x - 1][y]);
+    public Chunk getNeighborChunk(Direction direction) {
+        switch (direction) {
+            case UP:
+                return upNeighbor;
+            case DOWN:
+                return downNeighbor;
+            case LEFT:
+                return leftNeighbor;
+            case RIGHT:
+                return rightNeighbor;
         }
-        if (y != 0) {
-            neighbors.add(tiles[x][y - 1]);
-        }
-        if (x != size - 1) {
-            neighbors.add(tiles[x + 1][y]);
-        }
-        if (y != size - 1) {
-            neighbors.add(tiles[x][y + 1]);
-        }
-        return neighbors;
+        return null;
     }
 
     @Override

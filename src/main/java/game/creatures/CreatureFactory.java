@@ -45,7 +45,7 @@ public class CreatureFactory {
     public void CleanDead(Map<String, Creature> creatures) {
         creatures.entrySet().removeIf(e -> {
             Creature c = e.getValue();
-            if(c.isDead()) {
+            if (c.isDead()) {
                 if (c.isPlayer()) {
                     playerCount--;
                 } else {

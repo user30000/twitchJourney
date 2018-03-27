@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 public class FunctionalFiniteStateMachine {
     public static class Do {
-        public enum Action{
+        public enum Action {
             NOTHING,
             SWAP,
             SWAP_AND_DO
@@ -23,7 +23,6 @@ public class FunctionalFiniteStateMachine {
             this.action = action;
             this.state = state;
         }
-
 
         public static Do nothing() {
             return new Do(Action.NOTHING);
@@ -63,7 +62,7 @@ public class FunctionalFiniteStateMachine {
         Method method;
         method = c.getDeclaredMethod(state);
         assert method.getReturnType().equals(doing.getClass());
-        this.doing = (Do)method.invoke(this);
+        this.doing = (Do) method.invoke(this);
         switch (this.doing.action) {
             case NOTHING:
                 break;

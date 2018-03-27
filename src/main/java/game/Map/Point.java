@@ -1,9 +1,15 @@
 package game.Map;
 
+import util.Direction;
+
 public class Point extends java.awt.Point {
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void move(Direction direction) {
+        this.move(direction, 1);
     }
 
     public void left() {
@@ -22,19 +28,36 @@ public class Point extends java.awt.Point {
         this.up(1);
     }
 
-    public void left(int a) {
-        this.x -= a;
+    public void left(int delta) {
+        this.x -= delta;
     }
 
-    public void right(int a) {
-        this.x += a;
+    public void right(int delta) {
+        this.x += delta;
     }
 
-    public void down(int a) {
-        this.y -= a;
+    public void down(int delta) {
+        this.y -= delta;
     }
 
-    public void up(int a) {
-        this.y += a;
+    public void up(int delta) {
+        this.y += delta;
+    }
+
+    public void move(Direction direction, int delta) {
+        switch (direction) {
+            case RIGHT:
+                right(delta);
+                break;
+            case LEFT:
+                left(delta);
+                break;
+            case DOWN:
+                down(delta);
+                break;
+            case UP:
+                up(delta);
+                break;
+        }
     }
 }

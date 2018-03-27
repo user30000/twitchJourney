@@ -17,7 +17,7 @@ public class pathFinder extends LinkedList {
     protected List constructPath(AStarNode node) {
         LinkedList path = new LinkedList();
         while (node.pathParent != null) {
-            if(((Tile)node).reachable) {
+            if (((Tile) node).isReachable()) {
                 path.addFirst(node);
             }
             node = node.pathParent;

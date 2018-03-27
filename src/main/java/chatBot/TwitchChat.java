@@ -12,12 +12,11 @@ public class TwitchChat extends ChatConnector implements outMessageListener {
     }
 
     /**
-     *
-     * @param channel Канал, с которого пришло сообщение
-     * @param sender - хз
-     * @param login Логин отправителя
+     * @param channel  Канал, с которого пришло сообщение
+     * @param sender   - хз
+     * @param login    Логин отправителя
      * @param hostname - хз
-     * @param message Сообщение отправителя
+     * @param message  Сообщение отправителя
      */
 
     @Override
@@ -26,13 +25,13 @@ public class TwitchChat extends ChatConnector implements outMessageListener {
         this.log(channel + " " + login + ":" + message);
 
         //TODO Сделать обработчик сообщений
-        if("!red".toLowerCase().equals(message)){
+        if ("!red".toLowerCase().equals(message)) {
             gameEventListener.GameEvent(this, "red");
         }
-        if("!green".toLowerCase().equals(message)){
+        if ("!green".toLowerCase().equals(message)) {
             gameEventListener.GameEvent(this, "green");
         }
-        if("!blue".toLowerCase().equals(message)){
+        if ("!blue".toLowerCase().equals(message)) {
             gameEventListener.GameEvent(this, "blue");
         }
 
@@ -84,7 +83,7 @@ public class TwitchChat extends ChatConnector implements outMessageListener {
         }*/
     }
 
-    public void setGameEventListener(GameEventListener listener){
+    public void setGameEventListener(GameEventListener listener) {
         this.gameEventListener = listener;
     }
 

@@ -20,15 +20,15 @@ public class Player extends Creature implements target {
         Level = 1;
     }
 
-    public Player(String nickName){
+    public Player(String nickName) {
         this(100, nickName);
     }
 
-    public int getHealth(){
+    public int getHealth() {
         return Health;
     }
 
-    public String Yell(){
+    public String Yell() {
         return "Меня зовут " + NickName + " и у меня " + Health + " здоровья";
     }
 
@@ -41,7 +41,7 @@ public class Player extends Creature implements target {
         }
     }
 
-    public String getNickName(){
+    public String getNickName() {
         return NickName;
     }
 
@@ -51,27 +51,27 @@ public class Player extends Creature implements target {
     }
 
     @Override
-    public void Draw(GL2 gl){
+    public void Draw(GL2 gl) {
         gl.glColor3f(1f, 1f, 1f);
-        Texture t =  TexturePool.getInstance().getTexture("warrior");
-        if(t!=null) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D,t.getTextureObject());
+        Texture t = TexturePool.getInstance().getTexture("warrior");
+        if (t != null) {
+            gl.glBindTexture(GL.GL_TEXTURE_2D, t.getTextureObject());
             gl.glEnable(GL.GL_BLEND);
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         }
         gl.glBegin(GL2.GL_POLYGON);
         //gl.glEnable(GL2.GL_TEXTURE_2D);
 
-        gl.glTexCoord2f(1,1);
+        gl.glTexCoord2f(1, 1);
         gl.glVertex3i(position.x, position.y, 1);
 
-        gl.glTexCoord2f(1,0);
+        gl.glTexCoord2f(1, 0);
         gl.glVertex3i(position.x, position.y - 1, 1);
 
-        gl.glTexCoord2f(0,0);
+        gl.glTexCoord2f(0, 0);
         gl.glVertex3i(position.x - 1, position.y - 1, 1);
 
-        gl.glTexCoord2f(0,1);
+        gl.glTexCoord2f(0, 1);
         gl.glVertex3i(position.x - 1, position.y, 1);
 
         gl.glEnd();

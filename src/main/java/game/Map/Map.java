@@ -32,7 +32,7 @@ public class Map implements Drawable {
 
         for (int i = 0; i < size / chunkSize; i++) {
             for (int j = 0; j < size / chunkSize; j++) {
-                chunks[i][j] = getChunk(i, j);
+                chunks[i][j] = new Chunk(i, j);
             }
         }
 
@@ -58,6 +58,18 @@ public class Map implements Drawable {
                 }else {
                     chunks[i][j].setNeighborChunk(chunks[i][chunks.length - 1], Direction.UP);
                 }
+            }
+        }
+
+        for (int i = 0; i < chunks.length; i++) {
+            for (int j = 0; j < chunks.length; j++) {
+                Tile[][] tileSet = new Tile[chunkSize][chunkSize];
+                for (int k = 0; k < chunkSize; k++) {
+                    for (int l = 0; l < chunkSize; l++) {
+                        tileSet[k][l] = new Tile(heightMap[i * chunkSize + k][j * chunkSize + l]);
+                    }
+                }
+                chunks[i][j].setTiles(tileSet);
             }
         }
     }
@@ -119,13 +131,7 @@ public class Map implements Drawable {
     }
 
     public Chunk getChunk(int x, int y) {
-        Tile[][] tile = new Tile[chunkSize][chunkSize];
-        for (int i = 0; i < chunkSize; i++) {
-            for (int j = 0; j < chunkSize; j++) {
-                tile[i][j] = new Tile(heightMap[x * chunkSize + i][y * chunkSize + j]);
-            }
-        }
-        return new Chunk(x, y, tile);
+        return chunks[x][y];
     }
 
     @Override

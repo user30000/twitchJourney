@@ -11,7 +11,7 @@ import util.Utils;
 
 import java.util.*;
 
-public class Game implements Runnable, GameEventListener{
+public class Game implements Runnable, GameEventListener {
     private final java.util.Map<String, Creature> creatures;
     private graphListener gListener;
     private final Map gameMap;
@@ -28,10 +28,10 @@ public class Game implements Runnable, GameEventListener{
         gListener = g;
     }
 
-    public List<Creature> getPlayersList(){
+    public List<Creature> getPlayersList() {
         List<Creature> players = new ArrayList<>();
         creatures.forEach((key, c) -> {
-            if(c.isPlayer()) {
+            if (c.isPlayer()) {
                 players.add(c);
             }
         });
@@ -46,7 +46,7 @@ public class Game implements Runnable, GameEventListener{
             creatureFactory.CleanDead(creatures);
             creatureFactory.SavePopulationPlayer(creatures, this);
 
-            Utils.sleep(100);
+            Utils.sleep(Integer.parseInt(Prop.getProp("tickDelay")));
         }
     }
 
@@ -56,6 +56,7 @@ public class Game implements Runnable, GameEventListener{
             gameMap.Draw((GL4bcImpl) sender);
 
             creatures.forEach((key, c) -> c.Draw((GL4bcImpl) sender));
+            return;
         }
         switch (command) {
             case "red":
