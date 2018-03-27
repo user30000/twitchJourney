@@ -8,7 +8,8 @@ public class FunctionalFiniteStateMachine {
         public enum Action {
             NOTHING,
             SWAP,
-            SWAP_AND_DO
+            SWAP_AND_DO,
+            DO_AND_BACK
         }
 
         private final Action action;
@@ -34,6 +35,10 @@ public class FunctionalFiniteStateMachine {
 
         public static Do swap_and_do(String state) {
             return new Do(Action.SWAP_AND_DO, state);
+        }
+
+        public static Do do_and_back(String state) {
+            return new Do(Action.DO_AND_BACK, state);
         }
     }
 
@@ -72,6 +77,12 @@ public class FunctionalFiniteStateMachine {
             case SWAP_AND_DO:
                 this.state = this.doing.state;
                 this.action();
+                break;
+            case DO_AND_BACK:
+                String prev = this.state;
+                this.state = this.doing.state;
+                this.action();
+                this.state = prev;
                 break;
         }
     }
