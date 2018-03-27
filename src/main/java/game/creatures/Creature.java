@@ -152,7 +152,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
             Target = null;
         }
 
-        return Do.swap_to("IdleState");
+        return Do.nothing();
     }
 
 
