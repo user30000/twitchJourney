@@ -1,5 +1,4 @@
 import chatBot.TwitchChat;
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import game.Game;
@@ -18,13 +17,11 @@ public class twitchJourney {
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\warrior_1.png", "warrior");
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\zombie_1.png", "zombie");
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println(e.toString());
         }
 
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
-
-        GL2 gl = null;
 
         JoglCanvas canvas = new JoglCanvas(glcapabilities, 800, 500);
         JFrame frame = new JFrame("Mini JOGL Demo (breed)");
@@ -51,12 +48,6 @@ public class twitchJourney {
         game.setgListener(canvas);
         chatConnector.setGameEventListener(game);
         canvas.setGameEventListener(game);
-
-        try {
-            gl = canvas.getGl();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         Thread gameThread = new Thread(game);
         gameThread.start();
