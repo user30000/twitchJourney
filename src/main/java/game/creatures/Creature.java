@@ -5,29 +5,18 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import game.Game;
 import game.GameEventListener;
+import game.Map.Point;
 import game.Tickable;
 import game.target;
 import graphic.Drawable;
 import graphic.TexturePool;
+import util.FunctionalFiniteStateMachine;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class Creature implements Tickable, Drawable, target {
-    @Override
-    public Point getPosition() {
-        return position;
-    }
-
-    @Override
-    public void hit(int dmg) {
-
-    }
-
-    protected enum machineState {IDLE, ATTACK, MOVE}
-
-    private machineState State = machineState.IDLE;
+public class Creature extends FunctionalFiniteStateMachine implements Tickable, Drawable, target {
+    private Random r;
 
     protected int sightRange = 3;
 
@@ -57,19 +46,14 @@ public class Creature implements Tickable, Drawable, target {
     protected boolean dead = false;
 
     public Creature(int MaxHealth, String Type, String NickName){
+        super("IdleState");
         this.MaxHealth = MaxHealth;
         this.Health = MaxHealth;
         this.Type = Type;
         this.name = NickName;
+        this.r = new Random();
 
-        position = new Point();
-
-        position.x = 30 + new Random().nextInt(30) - 15;
-        position.y = 30 + new Random().nextInt(30) - 15;
-    }
-
-    public void setName(String name){
-        this.name = name;
+        position = new Point( 30 + r.nextInt(30) - 15, 30 + r.nextInt(30) - 15 );
     }
 
     public void setTextureName(String textureName){
@@ -101,32 +85,6 @@ public class Creature implements Tickable, Drawable, target {
         }
     }
 
-    public int attack(){
-        if(Target == null){
-            State = machineState.IDLE;
-        }
-
-        int dmg = 0;
-        if (Target.getPosition().distance(position) > 10) {
-            Target = null;
-            State = machineState.IDLE;
-        }
-        else if (Target.getPosition().distance(position) > 1){
-            Roam();
-        }
-        else {
-            dmg = Strength + new Random().nextInt(Luck);
-            Target.hit(dmg);
-
-            if(((Player)Target).isDead()){
-                Target = null;
-                State = machineState.IDLE;
-            }
-        }
-
-        return dmg;
-    }
-
     public void die(){
         dead = true;
         gameEventListener = null;
@@ -139,72 +97,81 @@ public class Creature implements Tickable, Drawable, target {
     @Override
     public void Tick() {
         this.Age++;
-        switch (State){
-            case IDLE:
-                Idle();
-                break;
-            case MOVE:
-                Roam();
-                break;
-            case ATTACK:
-                attack();
-                break;
-        }
-        //Roam();
+        super.step();
     }
 
-    private void SearchTarget(){
+    public Do IdleState(){
+        getDamage(1);
         if(gameEventListener == null)
-            return;
+            return Do.nothing();
 
-        ArrayList<Player> players = new ArrayList(((Game)gameEventListener).getPlayersList());
+        List<Creature> players = ((Game)gameEventListener).getPlayersList();
 
         if(Target == null) {
-            for (Player p : players) {
+            for (Creature p : players) {
                 int distance = ((int) p.getPosition().distance(position));
                 if (distance < sightRange){
                     Target = p;
-                    State = machineState.ATTACK;
-                    return;
+                    return Do.swap_to("AttackState");
                 }
             }
-        }/* else{
-            State = machineState.IDLE;
-        }*/
-        State = machineState.MOVE;
-    }
-
-    private void Idle(){
-        getDamage(1);
-        SearchTarget();
-    }
-
-    private void Roam(){
-        switch (new Random().nextInt(4)){
-            case 0:
-                position.x ++;
-                position.y ++;
-                break;
-            case 1:
-                position.x --;
-                position.y ++;
-                break;
-            case 2:
-                position.x ++;
-                position.y --;
-                break;
-            case 3:
-                position.x --;
-                position.y --;
-                break;
         }
+        return Do.swap_to("RoamState");
+    }
+
+    public Do RoamState(){
+        if(r.nextBoolean()) {
+            position.right();
+        } else {
+            position.left();
+        }
+
+        if(r.nextBoolean()) {
+            position.up();
+        } else {
+            position.down();
+        }
+
         if(Target == null) {
-            State = machineState.IDLE;
+            return Do.swap_to("IdleState");
+        } else {
+            return Do.nothing();
         }
     }
+
+    public Do AttackState(){
+        int dmg = 0;
+        if (Target == null || Target.getPosition().distance(position) > 10) {
+            Target = null;
+            return Do.swap_to("IdleState");
+        }
+
+        if (Target.getPosition().distance(position) > 1){
+            return Do.swap_and_do("RoamState");
+        }
+
+        dmg = Strength + r.nextInt(Luck);
+        Target.hit(dmg);
+
+        if(((Player)Target).isDead()){
+            Target = null;
+        }
+
+        return Do.swap_to("IdleState");
+    }
+
 
     public void setGameEventListener(GameEventListener listener){
         gameEventListener = listener;
+    }
+
+    @Override
+    public Point getPosition() {
+        return position;
+    }
+
+    @Override
+    public void hit(int dmg) {
     }
 
     @Override

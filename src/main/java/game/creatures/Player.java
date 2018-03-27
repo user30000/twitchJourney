@@ -6,8 +6,6 @@ import com.jogamp.opengl.util.texture.Texture;
 import game.target;
 import graphic.TexturePool;
 
-import java.awt.*;
-
 public class Player extends Creature implements target {
 
     private String NickName;
@@ -48,13 +46,6 @@ public class Player extends Creature implements target {
     }
 
     @Override
-    public void die(){
-        //dead = true;
-        //gameEventListener = null;
-        super.die();
-    }
-
-    @Override
     public void Tick() {
         //getDamage(new Random().nextInt(5));
     }
@@ -84,11 +75,6 @@ public class Player extends Creature implements target {
         gl.glVertex3i(position.x - 1, position.y, 1);
 
         gl.glEnd();
-    }
-
-    @Override
-    public Point getPosition() {
-        return position;
     }
 
     @Override

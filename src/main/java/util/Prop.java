@@ -39,4 +39,8 @@ public class Prop {
         }
         return instance.properties.getProperty(key);
     }
+
+    public static int getInt(String key) {
+        return Integer.parseInt(getProp(key));
+    }
 }
