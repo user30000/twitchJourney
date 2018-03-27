@@ -26,10 +26,6 @@ public class Creature implements Tickable, Drawable, target {
 
     }
 
-    protected enum machineState {IDLE, ATTACK, MOVE}
-
-    private machineState State = machineState.IDLE;
-
     protected int sightRange = 3;
 
     protected Point position;
