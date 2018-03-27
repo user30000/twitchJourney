@@ -11,6 +11,7 @@ import game.Tickable;
 import game.target;
 import graphic.Drawable;
 import graphic.TexturePool;
+import util.Direction;
 import util.FunctionalFiniteStateMachine;
 
 import java.util.LinkedList;
@@ -124,17 +125,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     }
 
     public Do RoamState() {
-        if (r.nextBoolean()) {
-            position.right();
-        } else {
-            position.left();
-        }
-
-        if (r.nextBoolean()) {
-            position.up();
-        } else {
-            position.down();
-        }
+        position.move(Direction.getRandom());
 
         if (Target == null) {
             return Do.swap_to("IdleState");
