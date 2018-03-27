@@ -11,14 +11,15 @@ public class FunctionalFiniteStateMachine {
             SWAP_AND_DO
         }
 
-        private Action action;
-        private String state;
+        private final Action action;
+        private final String state;
 
-        public Do(Action action) {
+        private Do(Action action) {
             this.action = action;
+            this.state = "";
         }
 
-        public Do(Action action, String state) {
+        private Do(Action action, String state) {
             this.action = action;
             this.state = state;
         }
