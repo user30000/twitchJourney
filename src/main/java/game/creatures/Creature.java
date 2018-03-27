@@ -142,7 +142,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         }
 
         if (Target.getPosition().distance(position) > 1) {
-            return Do.swap_and_do("RoamState");
+            return Do.do_and_back("RoamState");
         }
 
         dmg = Strength + r.nextInt(Luck);
