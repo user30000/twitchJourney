@@ -1,6 +1,6 @@
 package game;
 
-import java.awt.*;
+import game.Map.Point;
 
 public interface target {
     Point getPosition();
