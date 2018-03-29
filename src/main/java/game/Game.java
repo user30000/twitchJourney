@@ -20,7 +20,7 @@ public class Game implements Runnable, GameEventListener {
     public Game(outMessageListener chatListener) {
         creatures = Collections.synchronizedMap(new HashMap<String, Creature>());
         int mapSize = Prop.getInt("mapSize");
-        gameMap = new Map(mapSize);
+        gameMap = new Map(mapSize, this);
         creatureFactory = new CreatureFactory(chatListener);
     }
 
@@ -41,10 +41,7 @@ public class Game implements Runnable, GameEventListener {
     @Override
     public void run() {
         while (true) {
-            creatures.forEach((key, c) -> c.Tick());
-
-            creatureFactory.CleanDead(creatures);
-            creatureFactory.SavePopulationPlayer(creatures, this);
+            gameMap.Tick();
 
             Utils.sleep(Integer.parseInt(Prop.getProp("tickDelay")));
         }
