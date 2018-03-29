@@ -2,11 +2,22 @@ package game.Map;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import game.GameEventListener;
+import game.Tickable;
+import game.creatures.Creature;
+import game.creatures.CreatureFactory;
 import graphic.Drawable;
 import util.Direction;
 import util.Prop;
 
-public class Chunk implements Drawable {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+public class Chunk implements Drawable, Tickable {
+    private GameEventListener gameEventListener;
+
     private int size;
     private int posX;
     private int posY;
@@ -18,10 +29,18 @@ public class Chunk implements Drawable {
 
     private Tile[][] tiles;
 
-    public Chunk(int x, int y) {
+    private final java.util.Map<String, Creature> creatures;
+    private final CreatureFactory creatureFactory;
+
+    public Chunk(int x, int y, GameEventListener gameEventListener) {
+        this.gameEventListener = gameEventListener;
+
         size = Integer.parseInt(Prop.getProp("chunkSize"));
         posX = x;
         posY = y;
+
+        creatures = Collections.synchronizedMap(new HashMap<String, Creature>());
+        creatureFactory = new CreatureFactory(null);
     }
 
     public void setTiles(Tile[][] tileSet) {
@@ -93,6 +112,17 @@ public class Chunk implements Drawable {
         return null;
     }
 
+    public List<Creature> getPlayersList() {
+        List<Creature> players = new ArrayList<>();
+        creatures.forEach((key, c) -> {
+            if (c.isPlayer()) {
+                players.add(c);
+            }
+        });
+        return players;
+    }
+
+    //TODO Revert x and y axis
     @Override
     public void Draw(GL2 gl) {
         gl.glBegin(GL.GL_TRIANGLES);
@@ -136,5 +166,21 @@ public class Chunk implements Drawable {
             }
         }
         gl.glEnd();
+
+        //creatures.forEach((key, c) -> c.Draw(gl));
+    }
+
+    public void DrawCreatures(GL2 gl){
+        gl.glTranslatef(posY * size, posX * size, 0);
+        creatures.forEach((key, c) -> c.Draw(gl));
+        gl.glTranslatef(-posY * size, -posX * size, 0);
+    }
+
+    @Override
+    public void Tick() {
+        creatures.forEach((key, c) -> c.Tick());
+
+        creatureFactory.CleanDead(creatures);
+        creatureFactory.SavePopulationPlayer(creatures, this, gameEventListener);
     }
 }

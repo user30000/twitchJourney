@@ -3,8 +3,8 @@ package game.creatures;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
-import game.Game;
 import game.GameEventListener;
+import game.Map.Chunk;
 import game.Map.Point;
 import game.Map.Tile;
 import game.Tickable;
@@ -20,6 +20,7 @@ import java.util.Random;
 
 public class Creature extends FunctionalFiniteStateMachine implements Tickable, Drawable, target {
     private Random r;
+    protected Chunk parentChuck;
 
     protected int sightRange = 3;
 
@@ -110,7 +111,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         if (gameEventListener == null)
             return Do.nothing();
 
-        List<Creature> players = ((Game) gameEventListener).getPlayersList();
+        List<Creature> players = parentChuck.getPlayersList();
 
         if (Target == null) {
             for (Creature p : players) {
@@ -166,6 +167,10 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         daWay = new LinkedList(way);
     }
 
+    public void setParentChuck(Chunk chuck) {
+        parentChuck = chuck;
+    }
+
     @Override
     public Point getPosition() {
         return position;
@@ -185,7 +190,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         }
         gl.glBegin(GL2.GL_POLYGON);
-        //gl.glEnable(GL2.GL_TEXTURE_2D);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
 
         gl.glTexCoord2f(1, 1);
         gl.glVertex3f(position.x - 0.25f, position.y - 0.25f, 1);

@@ -1,13 +1,17 @@
 package game.Map;
 
 import com.jogamp.opengl.GL2;
+import game.GameEventListener;
+import game.Tickable;
 import graphic.Drawable;
 import util.Direction;
 import util.Prop;
 
 import java.util.Random;
 
-public class Map implements Drawable {
+public class Map implements Drawable, Tickable {
+    private GameEventListener gameEventListener;
+
     private int size;
     private int chunkSize;
     private Chunk[][] chunks;
@@ -15,7 +19,9 @@ public class Map implements Drawable {
 
     private Random r;
 
-    public Map(int size) {
+    public Map(int size, GameEventListener gameEventListener) {
+        this.gameEventListener = gameEventListener;
+
         this.size = size;
         chunkSize = Integer.parseInt(Prop.getProp("chunkSize"));
         r = new Random(500);
@@ -32,30 +38,30 @@ public class Map implements Drawable {
 
         for (int i = 0; i < size / chunkSize; i++) {
             for (int j = 0; j < size / chunkSize; j++) {
-                chunks[i][j] = new Chunk(i, j);
+                chunks[i][j] = new Chunk(i, j, gameEventListener);
             }
         }
 
         for (int i = 0; i < chunks.length; i++) {
             for (int j = 0; j < chunks.length; j++) {
-                if(i != chunks.length - 1) {
+                if (i != chunks.length - 1) {
                     chunks[i][j].setNeighborChunk(chunks[i + 1][j], Direction.RIGHT);
-                }else {
+                } else {
                     chunks[i][j].setNeighborChunk(chunks[0][j], Direction.RIGHT);
                 }
-                if(i != 0) {
+                if (i != 0) {
                     chunks[i][j].setNeighborChunk(chunks[i - 1][j], Direction.LEFT);
-                }else {
+                } else {
                     chunks[i][j].setNeighborChunk(chunks[chunks.length - 1][j], Direction.LEFT);
                 }
-                if(j != chunks.length - 1) {
+                if (j != chunks.length - 1) {
                     chunks[i][j].setNeighborChunk(chunks[i][j + 1], Direction.DOWN);
-                }else {
+                } else {
                     chunks[i][j].setNeighborChunk(chunks[i][0], Direction.DOWN);
                 }
-                if(j != 0) {
+                if (j != 0) {
                     chunks[i][j].setNeighborChunk(chunks[i][j - 1], Direction.UP);
-                }else {
+                } else {
                     chunks[i][j].setNeighborChunk(chunks[i][chunks.length - 1], Direction.UP);
                 }
             }
@@ -138,7 +144,22 @@ public class Map implements Drawable {
     public void Draw(GL2 gl) {
         for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
-                chunk[j].Draw(gl);
+                    chunk[j].Draw(gl);
+            }
+        }
+
+        for (Chunk[] chunk : chunks) {
+            for (int j = 0; j < chunks.length; j++) {
+                    chunk[j].DrawCreatures(gl);
+            }
+        }
+    }
+
+    @Override
+    public void Tick() {
+        for (Chunk[] chunk : chunks) {
+            for (int i = 0; i < chunks.length; i++) {
+                chunk[i].Tick();
             }
         }
     }
