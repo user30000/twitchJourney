@@ -2,6 +2,7 @@ package game.creatures;
 
 import chatBot.outMessageListener;
 import game.GameEventListener;
+import game.Map.Chunk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class CreatureFactory {
         chat = outMsg;
     }
 
-    public void SavePopulationPlayer(Map<String, Creature> creatures, GameEventListener listener) {
+    public void SavePopulationPlayer(Map<String, Creature> creatures, Chunk parentChunk, GameEventListener listener) {
         counterTick++;
 
         List<Creature> added = new ArrayList<>();
@@ -32,8 +33,11 @@ public class CreatureFactory {
         }
 
         added.forEach((c) -> {
-            chat.Write("Родился: " + c.toString());
+            if (chat != null) {
+                chat.Write("Родился: " + c.toString());
+            }
             creatures.put(c.getName(), c);
+            c.setParentChuck(parentChunk);
             c.setGameEventListener(listener);
         });
 
@@ -51,7 +55,9 @@ public class CreatureFactory {
                 } else {
                     creatureCount--;
                 }
-                chat.Write("Умер: " + c.toFullString());
+                if (chat != null) {
+                    chat.Write("Умер: " + c.toFullString());
+                }
                 return true;
             }
             return false;
