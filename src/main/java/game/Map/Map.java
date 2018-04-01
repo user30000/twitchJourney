@@ -45,24 +45,24 @@ public class Map implements Drawable, Tickable {
         for (int i = 0; i < chunks.length; i++) {
             for (int j = 0; j < chunks.length; j++) {
                 if (i != chunks.length - 1) {
-                    chunks[i][j].setNeighborChunk(chunks[i + 1][j], Direction.RIGHT);
+                    chunks[i][j].setNeighborChunk(chunks[i + 1][j], Direction.UP);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[0][j], Direction.RIGHT);
+                    chunks[i][j].setNeighborChunk(chunks[0][j], Direction.UP);
                 }
                 if (i != 0) {
-                    chunks[i][j].setNeighborChunk(chunks[i - 1][j], Direction.LEFT);
+                    chunks[i][j].setNeighborChunk(chunks[i - 1][j], Direction.DOWN);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[chunks.length - 1][j], Direction.LEFT);
+                    chunks[i][j].setNeighborChunk(chunks[chunks.length - 1][j], Direction.DOWN);
                 }
                 if (j != chunks.length - 1) {
-                    chunks[i][j].setNeighborChunk(chunks[i][j + 1], Direction.DOWN);
+                    chunks[i][j].setNeighborChunk(chunks[i][j + 1], Direction.RIGHT);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[i][0], Direction.DOWN);
+                    chunks[i][j].setNeighborChunk(chunks[i][0], Direction.RIGHT);
                 }
                 if (j != 0) {
-                    chunks[i][j].setNeighborChunk(chunks[i][j - 1], Direction.UP);
+                    chunks[i][j].setNeighborChunk(chunks[i][j - 1], Direction.LEFT);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[i][chunks.length - 1], Direction.UP);
+                    chunks[i][j].setNeighborChunk(chunks[i][chunks.length - 1], Direction.LEFT);
                 }
             }
         }
@@ -144,13 +144,13 @@ public class Map implements Drawable, Tickable {
     public void Draw(GL2 gl) {
         for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
-                    chunk[j].Draw(gl);
+                chunk[j].Draw(gl);
             }
         }
 
         for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
-                    chunk[j].DrawCreatures(gl);
+                chunk[j].DrawCreatures(gl);
             }
         }
     }
@@ -160,6 +160,12 @@ public class Map implements Drawable, Tickable {
         for (Chunk[] chunk : chunks) {
             for (int i = 0; i < chunks.length; i++) {
                 chunk[i].Tick();
+            }
+        }
+
+        for (Chunk[] chunk : chunks) {
+            for (int i = 0; i < chunks.length; i++) {
+                chunk[i].resetCreatures();
             }
         }
     }

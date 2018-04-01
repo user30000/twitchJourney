@@ -13,6 +13,7 @@ import graphic.Drawable;
 import graphic.TexturePool;
 import util.Direction;
 import util.FunctionalFiniteStateMachine;
+import util.Prop;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     private int MaxHealth;
     protected int Health;
 
-    private int Armor = 0;
+    protected int Armor = 0;
 
     private int Strength = 3;
     private int Agility;
@@ -41,7 +42,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     private int Will;
     private int Luck = 1;
 
-    private GameEventListener gameEventListener;
+    protected GameEventListener gameEventListener;
 
     private List daWay;
 
@@ -59,7 +60,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         this.name = NickName;
         this.r = new Random();
 
-        position = new Point(30 + r.nextInt(30) - 15, 30 + r.nextInt(30) - 15);
+        position = new Point(r.nextInt(32), r.nextInt(32));
     }
 
     public void setTextureName(String textureName) {
@@ -127,6 +128,26 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
 
     public Do RoamState() {
         position.move(Direction.getRandom());
+        Direction d = null;
+        if (position.x < 0) {
+            d = Direction.LEFT;
+            position.x += Integer.parseInt(Prop.getProp("chunkSize"));
+        }
+        if (position.x >= Integer.parseInt(Prop.getProp("chunkSize"))) {
+            d = Direction.RIGHT;
+            position.x -= Integer.parseInt(Prop.getProp("chunkSize"));
+        }
+        if (position.y < 0) {
+            d = Direction.DOWN;
+            position.y += Integer.parseInt(Prop.getProp("chunkSize"));
+        }
+        if (position.y >= Integer.parseInt(Prop.getProp("chunkSize"))) {
+            d = Direction.UP;
+            position.y -= Integer.parseInt(Prop.getProp("chunkSize"));
+        }
+        if (d != null) {
+            parentChuck.creatureRoaming(this.name, d);
+        }
 
         if (Target == null) {
             return Do.swap_to("IdleState");
@@ -149,7 +170,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         dmg = Strength + r.nextInt(Luck);
         Target.hit(dmg);
 
-        if (((Player) Target).isDead()) {
+        if (((Creature) Target).isDead()) {
             Target = null;
         }
 
@@ -178,6 +199,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
 
     @Override
     public void hit(int dmg) {
+        getDamage(dmg);
     }
 
     @Override

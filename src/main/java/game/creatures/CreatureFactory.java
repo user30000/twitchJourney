@@ -4,19 +4,36 @@ import chatBot.outMessageListener;
 import game.GameEventListener;
 import game.Map.Chunk;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class CreatureFactory {
-    private int playerCount = 0;
-    private int creatureCount = 0;
+    static private int playerCount = 0;
+    static private int creatureCount = 0;
     private int counterTick = 0;
     private final outMessageListener chat;
 
+    static private List<Creature> roamingList;
+
     public CreatureFactory(outMessageListener outMsg) {
+        if (roamingList == null) {
+            roamingList = new LinkedList<Creature>();
+        }
         chat = outMsg;
+    }
+
+    public void getRoamingcreature(Creature creature) {
+        roamingList.add(creature);
+    }
+
+    public void resetCreatures(Map<String, Creature> creatures, Chunk parentChunk) {
+        roamingList.forEach(c -> {
+            if (c.parentChuck == parentChunk) {
+                creatures.put(c.getName(), c);
+                //c.setParentChuck(parentChunk);
+            }
+        });
+
+        roamingList.removeIf(c -> c.parentChuck == parentChunk);
     }
 
     public void SavePopulationPlayer(Map<String, Creature> creatures, Chunk parentChunk, GameEventListener listener) {
@@ -46,7 +63,7 @@ public class CreatureFactory {
         }
     }
 
-    public void CleanDead(Map<String, Creature> creatures) {
+    public void CleanDead(Map<String, Creature> creatures, Chunk parentChunk) {
         creatures.entrySet().removeIf(e -> {
             Creature c = e.getValue();
             if (c.isDead()) {
@@ -55,9 +72,12 @@ public class CreatureFactory {
                 } else {
                     creatureCount--;
                 }
-                if (chat != null) {
+                if (chat != null && c.isDead()) {
                     chat.Write("Умер: " + c.toFullString());
                 }
+                return true;
+            }
+            if(c.parentChuck != parentChunk){
                 return true;
             }
             return false;

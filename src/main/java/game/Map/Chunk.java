@@ -10,10 +10,7 @@ import graphic.Drawable;
 import util.Direction;
 import util.Prop;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Chunk implements Drawable, Tickable {
     private GameEventListener gameEventListener;
@@ -31,6 +28,8 @@ public class Chunk implements Drawable, Tickable {
 
     private final java.util.Map<String, Creature> creatures;
     private final CreatureFactory creatureFactory;
+
+    private boolean spawner = true;
 
     public Chunk(int x, int y, GameEventListener gameEventListener) {
         this.gameEventListener = gameEventListener;
@@ -112,6 +111,16 @@ public class Chunk implements Drawable, Tickable {
         return null;
     }
 
+    public synchronized void creatureRoaming(String creatureName, Direction direction) {
+        //getNeighborChunk(direction).creatures.put(creatureName, creatures.remove(creatureName));
+        creatures.get(creatureName).setParentChuck(getNeighborChunk(direction));
+        creatureFactory.getRoamingcreature(creatures.get(creatureName));
+    }
+
+    public void resetCreatures(){
+        creatureFactory.resetCreatures(creatures, this);
+    }
+
     public List<Creature> getPlayersList() {
         List<Creature> players = new ArrayList<>();
         creatures.forEach((key, c) -> {
@@ -122,12 +131,22 @@ public class Chunk implements Drawable, Tickable {
         return players;
     }
 
+    public List<Creature> getCreatureList() {
+        List<Creature> creatureArrayList = new ArrayList<>();
+        creatures.forEach((key, c) -> {
+            if (!c.isPlayer()) {
+                creatureArrayList.add(c);
+            }
+        });
+        return creatureArrayList;
+    }
+
     //TODO Revert x and y axis
     @Override
     public void Draw(GL2 gl) {
         gl.glBegin(GL.GL_TRIANGLES);
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < size - 1; j++) {
                 float h = tiles[j][i].getHeight();
 
                 switch (tiles[j][i].getType()) {
@@ -170,7 +189,7 @@ public class Chunk implements Drawable, Tickable {
         //creatures.forEach((key, c) -> c.Draw(gl));
     }
 
-    public void DrawCreatures(GL2 gl){
+    public void DrawCreatures(GL2 gl) {
         gl.glTranslatef(posY * size, posX * size, 0);
         creatures.forEach((key, c) -> c.Draw(gl));
         gl.glTranslatef(-posY * size, -posX * size, 0);
@@ -180,7 +199,9 @@ public class Chunk implements Drawable, Tickable {
     public void Tick() {
         creatures.forEach((key, c) -> c.Tick());
 
-        creatureFactory.CleanDead(creatures);
-        creatureFactory.SavePopulationPlayer(creatures, this, gameEventListener);
+        creatureFactory.CleanDead(creatures, this);
+        if (spawner) {
+            creatureFactory.SavePopulationPlayer(creatures, this, gameEventListener);
+        }
     }
 }

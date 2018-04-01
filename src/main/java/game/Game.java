@@ -52,7 +52,6 @@ public class Game implements Runnable, GameEventListener {
         if (sender.getClass() == GL4bcImpl.class) {
             gameMap.Draw((GL4bcImpl) sender);
 
-            creatures.forEach((key, c) -> c.Draw((GL4bcImpl) sender));
             return;
         }
         switch (command) {

@@ -6,6 +6,8 @@ import com.jogamp.opengl.util.texture.Texture;
 import game.target;
 import graphic.TexturePool;
 
+import java.util.List;
+
 public class Player extends Creature implements target {
 
     private String NickName;
@@ -14,10 +16,19 @@ public class Player extends Creature implements target {
     private int Expirience;
     private int ExpForlevel = 100;
 
+    private int Strength = 10;
+    private int Agility;
+    private int Stamina;
+    private int Intellect;
+    private int Will;
+    private int Luck = 1;
+
     private Player(int MaxHealth, String nickName) {
         super(MaxHealth, "Player", nickName);
         NickName = nickName.toLowerCase();
         Level = 1;
+
+        Armor = 2;
     }
 
     public Player(String nickName) {
@@ -47,7 +58,37 @@ public class Player extends Creature implements target {
 
     @Override
     public void Tick() {
+        super.Tick();
         //getDamage(new Random().nextInt(5));
+    }
+
+    @Override
+    public Do IdleState(){
+        if (gameEventListener == null)
+            return Do.nothing();
+
+        List<Creature> players = parentChuck.getCreatureList();
+
+        if (Target == null) {
+            for (Creature p : players) {
+                int distance = ((int) p.getPosition().distance(position));
+                if (distance < sightRange) {
+                    Target = p;
+                    return Do.swap_to("AttackState");
+                }
+            }
+        }
+        return Do.swap_to("RoamState");
+    }
+
+    @Override
+    public Do AttackState(){
+        return super.AttackState();
+    }
+
+    @Override
+    public Do RoamState(){
+        return super.RoamState();
     }
 
     @Override
