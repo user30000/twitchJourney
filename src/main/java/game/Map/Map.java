@@ -1,9 +1,9 @@
 package game.Map;
 
-import com.jogamp.opengl.GL2;
 import game.GameEventListener;
 import game.Tickable;
 import graphic.Drawable;
+import graphic.JoglCanvas;
 import util.Direction;
 import util.Prop;
 
@@ -141,16 +141,17 @@ public class Map implements Drawable, Tickable {
     }
 
     @Override
-    public void Draw(GL2 gl) {
+    public void Draw(JoglCanvas canvas) {
+
         for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
-                chunk[j].Draw(gl);
+                chunk[j].Draw(canvas);
             }
         }
 
         for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
-                chunk[j].DrawCreatures(gl);
+                chunk[j].DrawCreatures(canvas);
             }
         }
     }

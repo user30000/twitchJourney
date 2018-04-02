@@ -10,6 +10,7 @@ import game.Map.Tile;
 import game.Tickable;
 import game.target;
 import graphic.Drawable;
+import graphic.JoglCanvas;
 import graphic.TexturePool;
 import util.Direction;
 import util.FunctionalFiniteStateMachine;
@@ -197,13 +198,26 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         return position;
     }
 
+    public Point getGlobalPosition() {
+        Point parentPosition = parentChuck.getPosition();
+        int x = parentPosition.y * Integer.parseInt(Prop.getProp("chunkSize")) + position.x;
+        int y = parentPosition.x * Integer.parseInt(Prop.getProp("chunkSize")) + position.y;
+        return new Point(x, y);
+    }
+
     @Override
     public void hit(int dmg) {
         getDamage(dmg);
     }
 
     @Override
-    public void Draw(GL2 gl) {
+    public void Draw(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         gl.glColor3f(1f, 1f, 1f);
         Texture t = TexturePool.getInstance().getTexture(textureName);
         if (t != null) {

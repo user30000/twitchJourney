@@ -7,12 +7,16 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
 import game.GameEventListener;
+import game.Map.Point;
+import util.Rect;
 
 import java.util.ArrayList;
 
 public class JoglCanvas extends GLCanvas implements GLEventListener, graphListener {
     private GL2 gl;
     private GLU glu;
+
+    private Rect camera;
 
     ArrayList<myVertex> vertexes;
     private GameEventListener gameEventListener;
@@ -24,6 +28,8 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         super(capabilities);
         setSize(width, height);
         addGLEventListener(this);
+
+        camera = new Rect(0, 0, 512, 512);
 
         vertexes = new ArrayList<>();
         vertexes.add(new myVertex(5, 5));
@@ -40,12 +46,11 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        gl.glViewport(0, 0, 500, 300);
-        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION_MATRIX);
         gl.glLoadIdentity();
-        glu.gluOrtho2D(-1, 64, -1.0, 64);
+        glu.gluOrtho2D(camera.getBottom(), camera.getUp(), camera.getLeft(), camera.getRight());
 
-        gl.glClearDepth(5.0f); // Set depth's clear-value to farthest
+        gl.glClearDepth(10.0f); // Set depth's clear-value to farthest
         gl.glEnable(GL2.GL_DEPTH_TEST); // Enables depth-buffer for hidden
         // surface removal
         //gl.glDepthFunc(GL2.GL_LEQUAL); // The type of depth testing to do
@@ -79,6 +84,10 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
     public void display(GLAutoDrawable drawable) {
         gl = (GL2) drawable.getGL();
+        // gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION_MATRIX);
+        gl.glLoadIdentity();
+        //glu.gluOrtho2D(0, 512, 0, 512);
+        glu.gluOrtho2D(camera.getBottom(), camera.getUp(), camera.getLeft(), camera.getRight());
 
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
@@ -89,12 +98,25 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         //gl.glBegin(GL.GL_TRIANGLES);
         if (gameEventListener != null) {
-            gameEventListener.GameEvent(gl, "");
+            gameEventListener.GameEvent(this, "Draw");
         }
         //gl.glEnd();
+
+        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+
+        gl.glColor3f(1f, 0f, 0f);
+
+        gl.glBegin(GL.GL_LINE_LOOP);
+
+        gl.glVertex2d(camera.getBottom(), camera.getLeft());
+        gl.glVertex2d(camera.getBottom(), camera.getRight());
+        gl.glVertex2d(camera.getUp(), camera.getRight());
+        gl.glVertex2d(camera.getUp(), camera.getLeft());
+
+        gl.glEnd();
     }
 
-    private void setCamera(GL2 gl, GLU glu, float distance) {
+    /*private void setCamera(GL2 gl, GLU glu, float distance) {
         // Change to projection matrix.
         gl.glMatrixMode(GLMatrixFunc.GL_MATRIX_MODE);
         gl.glLoadIdentity();
@@ -107,6 +129,18 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         // Change back to model view matrix.
         gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
+    }*/
+
+    private void setCamera(Point point) {
+        float cameraSize = 20;
+        //gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION_MATRIX);
+        //gl.glLoadIdentity();
+        //glu.gluOrtho2D(point.x - cameraSize, point.x + cameraSize, point.y - cameraSize, point.y + cameraSize);
+        camera = new Rect(point.y - cameraSize, point.x - cameraSize, point.y + cameraSize, point.x + cameraSize);
+    }
+
+    public boolean inCameraRect(Rect rect) {
+        return camera.included(rect);
     }
 
     public GL2 getGl() throws Exception {
@@ -120,7 +154,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
     }
 
     //@Override
-    public void AwesomeEvent(String command) {
+    public void AwesomeEvent(String command, Object sender) {
         red = 0;
         blue = 0;
         green = 0;
@@ -133,6 +167,12 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
                 break;
             case "green":
                 green = 1f;
+                break;
+
+            case "setCamera":
+                if (sender.getClass() == Point.class) {
+                    setCamera((Point) sender);
+                }
                 break;
         }
     }

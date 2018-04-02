@@ -4,9 +4,11 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import game.target;
+import graphic.JoglCanvas;
 import graphic.TexturePool;
 
 import java.util.List;
+import java.util.Random;
 
 public class Player extends Creature implements target {
 
@@ -63,7 +65,7 @@ public class Player extends Creature implements target {
     }
 
     @Override
-    public Do IdleState(){
+    public Do IdleState() {
         if (gameEventListener == null)
             return Do.nothing();
 
@@ -82,17 +84,26 @@ public class Player extends Creature implements target {
     }
 
     @Override
-    public Do AttackState(){
+    public Do AttackState() {
         return super.AttackState();
     }
 
     @Override
-    public Do RoamState(){
+    public Do RoamState() {
+        if (new Random().nextInt(1000) == 0) {
+            gameEventListener.GameEvent(this, "focusCreature");
+        }
         return super.RoamState();
     }
 
     @Override
-    public void Draw(GL2 gl) {
+    public void Draw(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         gl.glColor3f(1f, 1f, 1f);
         Texture t = TexturePool.getInstance().getTexture("warrior");
         if (t != null) {

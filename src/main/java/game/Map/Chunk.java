@@ -7,8 +7,10 @@ import game.Tickable;
 import game.creatures.Creature;
 import game.creatures.CreatureFactory;
 import graphic.Drawable;
+import graphic.JoglCanvas;
 import util.Direction;
 import util.Prop;
+import util.Rect;
 
 import java.util.*;
 
@@ -16,8 +18,7 @@ public class Chunk implements Drawable, Tickable {
     private GameEventListener gameEventListener;
 
     private int size;
-    private int posX;
-    private int posY;
+    private Point position;
 
     private Chunk upNeighbor;
     private Chunk downNeighbor;
@@ -32,11 +33,14 @@ public class Chunk implements Drawable, Tickable {
     private boolean spawner = true;
 
     public Chunk(int x, int y, GameEventListener gameEventListener) {
+        this(new Point(x, y), gameEventListener);
+    }
+
+    public Chunk(Point position, GameEventListener gameEventListener) {
         this.gameEventListener = gameEventListener;
+        this.position = position;
 
         size = Integer.parseInt(Prop.getProp("chunkSize"));
-        posX = x;
-        posY = y;
 
         creatures = Collections.synchronizedMap(new HashMap<String, Creature>());
         creatureFactory = new CreatureFactory(null);
@@ -80,6 +84,10 @@ public class Chunk implements Drawable, Tickable {
         }
     }
 
+    public Point getPosition() {
+        return position;
+    }
+
     public void setNeighborChunk(Chunk chunk, Direction direction) {
         switch (direction) {
             case UP:
@@ -117,7 +125,7 @@ public class Chunk implements Drawable, Tickable {
         creatureFactory.getRoamingcreature(creatures.get(creatureName));
     }
 
-    public void resetCreatures(){
+    public void resetCreatures() {
         creatureFactory.resetCreatures(creatures, this);
     }
 
@@ -143,56 +151,71 @@ public class Chunk implements Drawable, Tickable {
 
     //TODO Revert x and y axis
     @Override
-    public void Draw(GL2 gl) {
-        gl.glBegin(GL.GL_TRIANGLES);
-        for (int i = 0; i < size - 1; i++) {
-            for (int j = 0; j < size - 1; j++) {
-                float h = tiles[j][i].getHeight();
-
-                switch (tiles[j][i].getType()) {
-                    case 0:
-                        gl.glColor3f((h + 64) / 128, (h + 64) / 128, 0f);
-                        break;
-                    case 1:
-                        gl.glColor3f(h / 128, h / 128, h / 128);
-                        break;
-                    case 2:
-                        gl.glColor3f(0f, h / 128, 0f);
-                        break;
-                    case 3:
-                        gl.glColor3f(0f, 0f, (h + 64) / 128);
-                        break;
-                }
-
-                gl.glTexCoord2f(0.0625f, 1);
-                gl.glVertex2i(posY * size + i, posX * size + j);
-
-                gl.glTexCoord2f(0.0625f, 1 - 0.0625f);
-                gl.glVertex2i(posY * size + i, posX * size + j - 1);
-
-                gl.glTexCoord2f(0, 1 - 0.0625f);
-                gl.glVertex2i(posY * size + i - 1, posX * size + j - 1);
-
-
-                gl.glTexCoord2f(0.0625f, 1);
-                gl.glVertex2i(posY * size + i, posX * size + j);
-
-                gl.glTexCoord2f(0, 1);
-                gl.glVertex2i(posY * size + i - 1, posX * size + j);
-
-                gl.glTexCoord2f(0, 1 - 0.0625f);
-                gl.glVertex2i(posY * size + i - 1, posX * size + j - 1);
-            }
+    public void Draw(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        gl.glEnd();
+        if (gl != null && canvas.inCameraRect(new Rect(position.x * size, position.y * size, position.x * size + size, position.y * size + size))) {
+            gl.glBegin(GL.GL_TRIANGLES);
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    float h = tiles[j][i].getHeight();
 
+                    switch (tiles[j][i].getType()) {
+                        case 0:
+                            gl.glColor3f((h + 64) / 128, (h + 64) / 128, 0f);
+                            break;
+                        case 1:
+                            gl.glColor3f(h / 128, h / 128, h / 128);
+                            break;
+                        case 2:
+                            gl.glColor3f(0f, h / 128, 0f);
+                            break;
+                        case 3:
+                            gl.glColor3f(0f, 0f, (h + 64) / 128);
+                            break;
+                    }
+
+                    gl.glTexCoord2f(0.0625f, 1);
+                    gl.glVertex2i(position.y * size + i, position.x * size + j);
+
+                    gl.glTexCoord2f(0.0625f, 1 - 0.0625f);
+                    gl.glVertex2i(position.y * size + i, position.x * size + j - 1);
+
+                    gl.glTexCoord2f(0, 1 - 0.0625f);
+                    gl.glVertex2i(position.y * size + i - 1, position.x * size + j - 1);
+
+
+                    gl.glTexCoord2f(0.0625f, 1);
+                    gl.glVertex2i(position.y * size + i, position.x * size + j);
+
+                    gl.glTexCoord2f(0, 1);
+                    gl.glVertex2i(position.y * size + i - 1, position.x * size + j);
+
+                    gl.glTexCoord2f(0, 1 - 0.0625f);
+                    gl.glVertex2i(position.y * size + i - 1, position.x * size + j - 1);
+                }
+            }
+            gl.glEnd();
+        }
         //creatures.forEach((key, c) -> c.Draw(gl));
     }
 
-    public void DrawCreatures(GL2 gl) {
-        gl.glTranslatef(posY * size, posX * size, 0);
-        creatures.forEach((key, c) -> c.Draw(gl));
-        gl.glTranslatef(-posY * size, -posX * size, 0);
+    public void DrawCreatures(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (gl != null && canvas.inCameraRect(new Rect(position.x * size, position.y * size, position.x * size + size, position.y * size + size))) {
+            gl.glTranslatef(position.y * size, position.x * size, 0);
+            creatures.forEach((key, c) -> c.Draw(canvas));
+            gl.glTranslatef(-position.y * size, -position.x * size, 0);
+        }
     }
 
     @Override

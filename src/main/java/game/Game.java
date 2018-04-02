@@ -4,12 +4,16 @@ import chatBot.outMessageListener;
 import game.Map.Map;
 import game.creatures.Creature;
 import game.creatures.CreatureFactory;
+import game.creatures.Player;
+import graphic.JoglCanvas;
 import graphic.graphListener;
-import jogamp.opengl.gl4.GL4bcImpl;
 import util.Prop;
 import util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class Game implements Runnable, GameEventListener {
     private final java.util.Map<String, Creature> creatures;
@@ -17,11 +21,14 @@ public class Game implements Runnable, GameEventListener {
     private final Map gameMap;
     private final CreatureFactory creatureFactory;
 
+    private Creature focusedCreature;
+
     public Game(outMessageListener chatListener) {
         creatures = Collections.synchronizedMap(new HashMap<String, Creature>());
         int mapSize = Prop.getInt("mapSize");
         gameMap = new Map(mapSize, this);
         creatureFactory = new CreatureFactory(chatListener);
+        focusedCreature = null;
     }
 
     public void setgListener(graphListener g) {
@@ -49,16 +56,29 @@ public class Game implements Runnable, GameEventListener {
 
     @Override
     public void GameEvent(Object sender, String command) {
-        if (sender.getClass() == GL4bcImpl.class) {
-            gameMap.Draw((GL4bcImpl) sender);
-
-            return;
-        }
         switch (command) {
+            case "Draw":
+                if (sender.getClass() == JoglCanvas.class) {
+                    if (focusedCreature != null) {
+                        gListener.AwesomeEvent("setCamera", focusedCreature.getGlobalPosition());
+                    }
+
+                    try {
+                        gameMap.Draw((JoglCanvas)sender);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return;
+            case "focusCreature":
+                if (sender.getClass() == Player.class) {
+                    focusedCreature = (Player) sender;
+                }
+                break;
             case "red":
             case "blue":
             case "green":
-                gListener.AwesomeEvent(command);
+                gListener.AwesomeEvent(command, sender);
                 break;
         }
     }
