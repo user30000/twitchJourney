@@ -103,7 +103,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         }
 
         if (!globalCamera) {//global camera show all map
-            glu.gluOrtho2D(camera.getBottom(), camera.getUp(), camera.getLeft(), camera.getRight());
+            glu.gluOrtho2D(camera.getLeft(), camera.getRight(), camera.getBottom(), camera.getUp());
         } else {
             glu.gluOrtho2D(0, mapSize, 0, mapSize);
         }
@@ -127,17 +127,17 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         gl.glBegin(GL.GL_LINE_LOOP);
 
-        gl.glVertex2d(camera.getBottom(), camera.getLeft());
-        gl.glVertex2d(camera.getBottom(), camera.getRight());
-        gl.glVertex2d(camera.getUp(), camera.getRight());
-        gl.glVertex2d(camera.getUp(), camera.getLeft());
+        gl.glVertex2d(camera.getLeft(), camera.getBottom());
+        gl.glVertex2d(camera.getRight(), camera.getBottom());
+        gl.glVertex2d(camera.getRight(), camera.getUp());
+        gl.glVertex2d(camera.getLeft(), camera.getUp());
 
         gl.glEnd();
     }
 
     private void setCamera(Point point) {
         float cameraSize = 20;
-        camera = new Rect(point.y - cameraSize, point.x - cameraSize, point.y + cameraSize, point.x + cameraSize);
+        camera = new Rect(point.x - cameraSize, point.y - cameraSize, point.x + cameraSize, point.y + cameraSize);
     }
 
     public boolean inCameraRect(Rect rect) {

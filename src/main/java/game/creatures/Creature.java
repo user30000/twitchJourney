@@ -128,7 +128,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     }
 
     public Do RoamState() {
-        position.move(Direction.getRandom());
+        position.move(Direction.UP);//.getRandom());
         Direction d = null;
         if (position.x < 0) {
             d = Direction.LEFT;
@@ -200,8 +200,8 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
 
     public Point getGlobalPosition() {
         Point parentPosition = parentChuck.getPosition();
-        int x = parentPosition.y * Integer.parseInt(Prop.getProp("chunkSize")) + position.x;
-        int y = parentPosition.x * Integer.parseInt(Prop.getProp("chunkSize")) + position.y;
+        int x = parentPosition.x * Prop.getInt("chunkSize") + position.x;
+        int y = parentPosition.y * Prop.getInt("chunkSize") + position.y;
         return new Point(x, y);
     }
 

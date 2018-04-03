@@ -104,8 +104,8 @@ public class Map implements Drawable, Tickable {
         if (heightMap[(x + y) / 2][0] == 0) {
             heightMap[(x + y) / 2][size - 1] = heightMap[(x + y) / 2][0] = (heightMap[x][0] + heightMap[y][0]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
         }
-        generateHorizontalBorders(x, (y + x) / 2);
-        generateHorizontalBorders((y + x) / 2, y);
+        generateHorizontalBorders(x, (x + y) / 2);
+        generateHorizontalBorders((x + y) / 2, y);
     }
 
     private void generate(int i1, int i2, int i3, int i4) {
@@ -113,20 +113,20 @@ public class Map implements Drawable, Tickable {
         if (diff <= 1)
             return;
         int noise = Math.min(diff, 64);
-        if (heightMap[(i3 + i1) / 2][(i4 + i2) / 2] == 0) {
-            heightMap[(i3 + i1) / 2][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise / 2);//center
+        if (heightMap[(i1 + i3) / 2][(i2 + i4) / 2] == 0) {
+            heightMap[(i1 + i3) / 2][(i2 + i4) / 2] = (heightMap[i1][i2] + heightMap[i1][i4] + heightMap[i3][i2] + heightMap[i3][i4]) / 4 + (r.nextInt(noise) - noise / 2);//center
         }
-        if (heightMap[i1][(i4 + i2) / 2] == 0) {
-            heightMap[i1][(i4 + i2) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
+        if (heightMap[i1][(i2 + i4) / 2] == 0) {
+            heightMap[i1][(i2 + i4) / 2] = (heightMap[i1][i2] + heightMap[i1][i4]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
         }
-        if (heightMap[i3][(i4 + i2) / 2] == 0) {
-            heightMap[i3][(i4 + i2) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//top
+        if (heightMap[i3][(i2 + i4) / 2] == 0) {
+            heightMap[i3][(i2 + i4) / 2] = (heightMap[i3][i2] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//top
         }
-        if (heightMap[(i3 + i1) / 2][i2] == 0) {
-            heightMap[(i3 + i1) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (r.nextInt(noise) - noise / 2);//left
+        if (heightMap[(i1 + i3) / 2][i2] == 0) {
+            heightMap[(i1 + i3) / 2][i2] = (heightMap[i1][i2] + heightMap[i3][i2]) / 2 + (r.nextInt(noise) - noise / 2);//left
         }
-        if (heightMap[(i3 + i1) / 2][i4] == 0) {
-            heightMap[(i3 + i1) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//right
+        if (heightMap[(i1 + i3) / 2][i4] == 0) {
+            heightMap[(i1 + i3) / 2][i4] = (heightMap[i1][i4] + heightMap[i3][i4]) / 2 + (r.nextInt(noise) - noise / 2);//right
         }
 
         generate(i1, i2, i3 - diff / 2, i4 - diff / 2);//низ лево
