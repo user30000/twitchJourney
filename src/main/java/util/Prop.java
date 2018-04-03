@@ -42,4 +42,8 @@ public class Prop {
     public static int getInt(String key) {
         return Integer.parseInt(getProp(key));
     }
+
+    public static boolean getBoolean(String key) {
+        return Boolean.parseBoolean(getProp(key));
+    }
 }
