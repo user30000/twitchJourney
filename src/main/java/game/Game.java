@@ -59,10 +59,6 @@ public class Game implements Runnable, GameEventListener {
         switch (command) {
             case "Draw":
                 if (sender.getClass() == JoglCanvas.class) {
-                    if (focusedCreature != null) {
-                        gListener.AwesomeEvent("setCamera", focusedCreature.getGlobalPosition());
-                    }
-
                     try {
                         gameMap.Draw((JoglCanvas)sender);
                     } catch (Exception e) {
@@ -72,7 +68,7 @@ public class Game implements Runnable, GameEventListener {
                 return;
             case "focusCreature":
                 if (sender.getClass() == Player.class) {
-                    focusedCreature = (Player) sender;
+                    gListener.AwesomeEvent("setFocusedCreature", sender);
                 }
                 break;
             case "red":
