@@ -128,7 +128,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     }
 
     public Do RoamState() {
-        position.move(Direction.UP);//.getRandom());
+        position.move(Direction.getRandom());
         Direction d = null;
         if (position.x < 0) {
             d = Direction.LEFT;
