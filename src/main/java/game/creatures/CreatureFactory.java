@@ -3,12 +3,16 @@ package game.creatures;
 import chatBot.outMessageListener;
 import game.GameEventListener;
 import game.Map.Chunk;
+import util.Prop;
 
 import java.util.*;
 
 public class CreatureFactory {
     static private int playerCount = 0;
     static private int creatureCount = 0;
+    static private int playersMaximum = Prop.getInt("playersMaximum");
+    static private int creaturesMaximum = Prop.getInt("creaturesMaximum");
+
     private int counterTick = 0;
     private final outMessageListener chat;
 
@@ -41,11 +45,11 @@ public class CreatureFactory {
 
         List<Creature> added = new ArrayList<>();
 
-        if (counterTick == 5 && playerCount < 10) {
+        if (counterTick == 5 && playerCount < playersMaximum) {
             added.add(this.createPlayer());
         }
 
-        if (creatureCount < 10) {
+        if (creatureCount < creaturesMaximum) {
             added.add(this.createCreature());
         }
 
