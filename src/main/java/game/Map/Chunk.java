@@ -40,7 +40,7 @@ public class Chunk implements Drawable, Tickable {
         this.gameEventListener = gameEventListener;
         this.position = position;
 
-        size = Integer.parseInt(Prop.getProp("chunkSize"));
+        size = Prop.getInt("chunkSize");
 
         creatures = Collections.synchronizedMap(new HashMap<String, Creature>());
         creatureFactory = new CreatureFactory(null);

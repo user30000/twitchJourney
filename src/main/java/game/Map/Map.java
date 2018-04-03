@@ -23,7 +23,7 @@ public class Map implements Drawable, Tickable {
         this.gameEventListener = gameEventListener;
 
         this.size = size;
-        chunkSize = Integer.parseInt(Prop.getProp("chunkSize"));
+        chunkSize = Prop.getInt("chunkSize");
         r = new Random(500);
 
         heightMap = new int[size][size];

@@ -50,7 +50,7 @@ public class Game implements Runnable, GameEventListener {
         while (true) {
             gameMap.Tick();
 
-            Utils.sleep(Integer.parseInt(Prop.getProp("tickDelay")));
+            Utils.sleep(Prop.getInt("tickDelay"));
         }
     }
 

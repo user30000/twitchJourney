@@ -132,19 +132,19 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         Direction d = null;
         if (position.x < 0) {
             d = Direction.LEFT;
-            position.x += Integer.parseInt(Prop.getProp("chunkSize"));
+            position.x += Prop.getInt("chunkSize");
         }
-        if (position.x >= Integer.parseInt(Prop.getProp("chunkSize"))) {
+        if (position.x >= Prop.getInt("chunkSize")) {
             d = Direction.RIGHT;
-            position.x -= Integer.parseInt(Prop.getProp("chunkSize"));
+            position.x -= Prop.getInt("chunkSize");
         }
         if (position.y < 0) {
             d = Direction.DOWN;
-            position.y += Integer.parseInt(Prop.getProp("chunkSize"));
+            position.y += Prop.getInt("chunkSize");
         }
-        if (position.y >= Integer.parseInt(Prop.getProp("chunkSize"))) {
+        if (position.y >= Prop.getInt("chunkSize")) {
             d = Direction.UP;
-            position.y -= Integer.parseInt(Prop.getProp("chunkSize"));
+            position.y -= Prop.getInt("chunkSize");
         }
         if (d != null) {
             parentChuck.creatureRoaming(this.name, d);
