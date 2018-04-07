@@ -28,13 +28,14 @@ public class Game implements Runnable, GameEventListener {
         int mapSize = Prop.getInt("mapSize");
         gameMap = new Map(mapSize, this);
         creatureFactory = new CreatureFactory(chatListener);
-        focusedCreature = null;
+        //focusedCreature = null;
     }
 
     public void setgListener(graphListener g) {
         gListener = g;
     }
 
+    @Deprecated
     public List<Creature> getPlayersList() {
         List<Creature> players = new ArrayList<>();
         creatures.forEach((key, c) -> {

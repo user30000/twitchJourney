@@ -61,7 +61,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         this.name = NickName;
         this.r = new Random();
 
-        position = new Point(r.nextInt(32), r.nextInt(32));
+        position = new Point(r.nextInt(64), 63);//r.nextInt(1));
     }
 
     public void setTextureName(String textureName) {
@@ -128,23 +128,30 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     }
 
     public Do RoamState() {
-        position.move(Direction.getRandom());
+        List<Direction> neighbors = parentChuck.getPointFreeNeighbors(getGlobalPosition());
+        if(neighbors.size() <= 0)
+            return Do.swap_to("IdleState");
+        //neighbors.get(new Random().nextInt(neighbors.size()));
+
+        position.move(neighbors.get(new Random().nextInt(neighbors.size())));//Direction.getRandom());
+        //position = x;
         Direction d = null;
+        int chunkSize = Prop.getInt("chunkSize");
         if (position.x < 0) {
             d = Direction.LEFT;
-            position.x += Prop.getInt("chunkSize");
+            position.x += chunkSize;
         }
-        if (position.x >= Prop.getInt("chunkSize")) {
+        if (position.x >= chunkSize) {
             d = Direction.RIGHT;
-            position.x -= Prop.getInt("chunkSize");
+            position.x -= chunkSize;
         }
         if (position.y < 0) {
             d = Direction.DOWN;
-            position.y += Prop.getInt("chunkSize");
+            position.y += chunkSize;
         }
-        if (position.y >= Prop.getInt("chunkSize")) {
+        if (position.y >= chunkSize) {
             d = Direction.UP;
-            position.y -= Prop.getInt("chunkSize");
+            position.y -= chunkSize;
         }
         if (d != null) {
             parentChuck.creatureRoaming(this.name, d);
@@ -249,7 +256,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
 
             for (Object tile : daWay) {
                 Tile b = (Tile) tile;
-                gl.glVertex3i(b.posX, b.posY, 3);
+                gl.glVertex3i(b.position.x, b.position.y, 3);
             }
             gl.glEnd();
         }

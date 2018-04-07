@@ -1,6 +1,7 @@
 package game.Map;
 
 import util.Direction;
+import util.Prop;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +12,10 @@ public class Tile extends AStarNode {
     private int weight;
     private int visits;
 
-    public int posX;
-    public int posY;
+    public Point position;
+
+    //public int posX;
+    //public int posY;
 
     private Tile upNeighbor;
     private Tile downNeighbor;
@@ -24,6 +27,7 @@ public class Tile extends AStarNode {
     private Chunk parentChunk;
 
     Tile(int height) {
+        position = new Point(0, 0);
         this.height = height;
         if (height < 10) {//water
             type = 3;
@@ -59,6 +63,20 @@ public class Tile extends AStarNode {
         }
     }
 
+    public Tile getNeighborTile(Direction direction) {
+        switch (direction) {
+            case UP:
+                return upNeighbor;
+            case DOWN:
+                return downNeighbor;
+            case LEFT:
+                return leftNeighbor;
+            case RIGHT:
+                return rightNeighbor;
+        }
+        return null;
+    }
+
     int getType() {
         return type;
     }
@@ -78,8 +96,15 @@ public class Tile extends AStarNode {
     }
 
     void setPosition(int x, int y) {
-        posX = x;
-        posY = y;
+        position.x = x;
+        position.y = y;
+    }
+
+    public Point getGlobalPosition() {
+        Point parentPosition = parentChunk.getPosition();
+        int x = parentPosition.x * Prop.getInt("chunkSize") + position.x;
+        int y = parentPosition.y * Prop.getInt("chunkSize") + position.y;
+        return new Point(x, y);
     }
 
     @Override
@@ -93,7 +118,7 @@ public class Tile extends AStarNode {
     }
 
     @Override
-    public List getNeighbors() {
+    public List<Tile> getNeighbors() {
         LinkedList<Tile> neighbors = new LinkedList<>();
         neighbors.add(upNeighbor);
         neighbors.add(downNeighbor);

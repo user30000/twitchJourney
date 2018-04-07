@@ -179,7 +179,9 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
             case "setFocusedCreature":
                 if (sender.getClass() == Creature.class || sender.getClass() == Player.class) {
                     //setCamera((Point) sender);
-                    focusedCreature = (Creature) sender;
+                    if (focusedCreature == null && Prop.getBoolean("focusPlayer")) {
+                        focusedCreature = (Creature) sender;
+                    }
                 }
                 break;
         }

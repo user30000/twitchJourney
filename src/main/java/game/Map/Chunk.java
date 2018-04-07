@@ -57,28 +57,30 @@ public class Chunk implements Drawable, Tickable {
                 j++;
             }
         }
+    }
 
+    public void setTilesNeighbors() {
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles.length; j++) {
                 if (i != tiles.length - 1) {
                     tiles[i][j].setNeighborTile(tiles[i + 1][j], Direction.RIGHT);
                 } else {
-                    tiles[i][j].setNeighborTile(tiles[0][j], Direction.RIGHT);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.RIGHT).tiles[0][j], Direction.RIGHT);
                 }
                 if (i != 0) {
                     tiles[i][j].setNeighborTile(tiles[i - 1][j], Direction.LEFT);
                 } else {
-                    tiles[i][j].setNeighborTile(tiles[tiles.length - 1][j], Direction.LEFT);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.LEFT).tiles[tiles.length - 1][j], Direction.LEFT);
                 }
                 if (j != tiles.length - 1) {
                     tiles[i][j].setNeighborTile(tiles[i][j + 1], Direction.DOWN);
                 } else {
-                    tiles[i][j].setNeighborTile(tiles[i][0], Direction.DOWN);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.DOWN).tiles[i][0], Direction.DOWN);
                 }
                 if (j != 0) {
                     tiles[i][j].setNeighborTile(tiles[i][j - 1], Direction.UP);
                 } else {
-                    tiles[i][j].setNeighborTile(tiles[i][tiles.length - 1], Direction.UP);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.UP).tiles[i][tiles.length - 1], Direction.UP);
                 }
             }
         }
@@ -119,6 +121,25 @@ public class Chunk implements Drawable, Tickable {
         return null;
     }
 
+    public List<Direction> getPointFreeNeighbors(Point point) {
+        LinkedList<Direction> neighbors = new LinkedList<>();
+        Tile tile = tiles[point.x % size][point.y % size];
+
+        if (tile.getNeighborTile(Direction.RIGHT).isReachable()) {
+            neighbors.add(Direction.RIGHT);
+        }
+        if (tile.getNeighborTile(Direction.UP).isReachable()) {
+            neighbors.add(Direction.UP);
+        }
+        if (tile.getNeighborTile(Direction.LEFT).isReachable()) {
+            neighbors.add(Direction.LEFT);
+        }
+        if (tile.getNeighborTile(Direction.DOWN).isReachable()) {
+            neighbors.add(Direction.DOWN);
+        }
+        return neighbors;
+    }
+
     public synchronized void creatureRoaming(String creatureName, Direction direction) {
         creatures.get(creatureName).setParentChuck(getNeighborChunk(direction));
         creatureFactory.getRoamingcreature(creatures.get(creatureName));
@@ -148,7 +169,6 @@ public class Chunk implements Drawable, Tickable {
         return creatureArrayList;
     }
 
-    //TODO Revert x and y axis
     @Override
     public void Draw(JoglCanvas canvas) {
         GL2 gl = null;
