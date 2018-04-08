@@ -3,6 +3,7 @@ package game.creatures;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+import game.Map.Chunk;
 import game.target;
 import graphic.JoglCanvas;
 import graphic.TexturePool;
@@ -25,16 +26,16 @@ public class Player extends Creature implements target {
     private int Will;
     private int Luck = 1;
 
-    private Player(int MaxHealth, String nickName) {
-        super(MaxHealth, "Player", nickName);
+    private Player(int MaxHealth, String nickName, Chunk parent) {
+        super(MaxHealth, "Player", nickName, parent);
         NickName = nickName.toLowerCase();
         Level = 1;
 
         Armor = 2;
     }
 
-    public Player(String nickName) {
-        this(100, nickName);
+    public Player(String nickName, Chunk parent) {
+        this(100, nickName, parent);
     }
 
     public int getHealth() {

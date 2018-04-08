@@ -46,11 +46,11 @@ public class CreatureFactory {
         List<Creature> added = new ArrayList<>();
 
         if (counterTick == 5 && playerCount < playersMaximum) {
-            added.add(this.createPlayer());
+            added.add(this.createPlayer(parentChunk));
         }
 
         if (creatureCount < creaturesMaximum) {
-            added.add(this.createCreature());
+            added.add(this.createCreature(parentChunk));
         }
 
         added.forEach((c) -> {
@@ -58,7 +58,6 @@ public class CreatureFactory {
                 chat.Write("Родился: " + c.toString());
             }
             creatures.put(c.getName(), c);
-            c.setParentChuck(parentChunk);
             c.setGameEventListener(listener);
         });
 
@@ -88,16 +87,16 @@ public class CreatureFactory {
         });
     }
 
-    private Creature createPlayer() {
+    private Creature createPlayer(Chunk chunk) {
         playerCount++;
         String Name = "Чувачок" + String.valueOf(new Random().nextInt());
-        return new Player(Name);
+        return new Player(Name, chunk);
     }
 
-    private Creature createCreature() {
+    private Creature createCreature(Chunk chunk) {
         String Name = "Монстряш" + String.valueOf(new Random().nextInt());
         creatureCount++;
-        Creature c = new Creature(15, "zombie", Name);
+        Creature c = new Creature(15, "zombie", Name, chunk);
         c.setTextureName("zombie");
         return c;
     }
