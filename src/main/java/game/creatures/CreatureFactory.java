@@ -58,7 +58,6 @@ public class CreatureFactory {
                 chat.Write("Родился: " + c.toString());
             }
             creatures.put(c.getName(), c);
-            c.setParentChuck(parentChunk);
             c.setGameEventListener(listener);
         });
 

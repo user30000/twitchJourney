@@ -85,14 +85,14 @@ public class Chunk implements Drawable, Tickable {
                     tiles[i][j].setNeighborTile(getNeighborChunk(Direction.LEFT).tiles[tiles.length - 1][j], Direction.LEFT);
                 }
                 if (j != tiles.length - 1) {
-                    tiles[i][j].setNeighborTile(tiles[i][j + 1], Direction.DOWN);
+                    tiles[i][j].setNeighborTile(tiles[i][j + 1], Direction.UP);
                 } else {
-                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.DOWN).tiles[i][0], Direction.DOWN);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.UP).tiles[i][0], Direction.UP);
                 }
                 if (j != 0) {
-                    tiles[i][j].setNeighborTile(tiles[i][j - 1], Direction.UP);
+                    tiles[i][j].setNeighborTile(tiles[i][j - 1], Direction.DOWN);
                 } else {
-                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.UP).tiles[i][tiles.length - 1], Direction.UP);
+                    tiles[i][j].setNeighborTile(getNeighborChunk(Direction.DOWN).tiles[i][tiles.length - 1], Direction.DOWN);
                 }
             }
         }

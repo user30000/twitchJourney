@@ -137,9 +137,9 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         List<Direction> neighbors = parentChuck.getPointFreeNeighbors(getGlobalPosition());
         if (neighbors.size() <= 0)
             return Do.swap_to("IdleState");
-        //neighbors.get(new Random().nextInt(neighbors.size()));
 
-        position.move(neighbors.get(new Random().nextInt(neighbors.size())));//Direction.getRandom());
+        // Get random neighbors (tile)
+        position.move(neighbors.get(new Random().nextInt(neighbors.size())));
         //position = x;
         Direction d = null;
         int chunkSize = Prop.getInt("chunkSize");
