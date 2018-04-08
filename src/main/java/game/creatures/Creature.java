@@ -53,15 +53,16 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     protected int Age = 0;
     protected boolean dead = false;
 
-    public Creature(int MaxHealth, String Type, String NickName) {
+    public Creature(int MaxHealth, String Type, String NickName, Chunk Parent) {
         super("IdleState");
         this.MaxHealth = MaxHealth;
         this.Health = MaxHealth;
         this.Type = Type;
         this.name = NickName;
         this.r = new Random();
+        this.parentChuck = Parent;
 
-        position = new Point(r.nextInt(64), 63);//r.nextInt(1));
+        position = parentChuck.getRandomReachableTile().position;
     }
 
     public void setTextureName(String textureName) {
@@ -98,6 +99,11 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         gameEventListener = null;
     }
 
+    public void setParentChuck(Chunk chuck) {
+        parentChuck = chuck;
+    }
+
+
     public boolean isDead() {
         return dead;
     }
@@ -129,7 +135,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
 
     public Do RoamState() {
         List<Direction> neighbors = parentChuck.getPointFreeNeighbors(getGlobalPosition());
-        if(neighbors.size() <= 0)
+        if (neighbors.size() <= 0)
             return Do.swap_to("IdleState");
         //neighbors.get(new Random().nextInt(neighbors.size()));
 
@@ -194,10 +200,6 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         if (way == null)
             return;
         daWay = new LinkedList(way);
-    }
-
-    public void setParentChuck(Chunk chuck) {
-        parentChuck = chuck;
     }
 
     @Override

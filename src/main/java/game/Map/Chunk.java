@@ -18,6 +18,7 @@ public class Chunk implements Drawable, Tickable {
     private GameEventListener gameEventListener;
 
     private int size;
+    private int reachableTiles = 0;
     private Point position;
 
     private Chunk upNeighbor;
@@ -31,6 +32,7 @@ public class Chunk implements Drawable, Tickable {
     private final CreatureFactory creatureFactory;
 
     private boolean spawner = true;
+    private boolean reachable = false;
 
     public Chunk(int x, int y, GameEventListener gameEventListener) {
         this(new Point(x, y), gameEventListener);
@@ -55,7 +57,17 @@ public class Chunk implements Drawable, Tickable {
                 tile.setParentChunk(this);
                 tile.setPosition(i, j);
                 j++;
+                if (tile.isReachable()) {
+                    reachableTiles++;
+                }
             }
+        }
+
+        if (reachableTiles == 0) {
+            spawner = false;
+            reachable = false;
+        } else {
+            reachable = true;
         }
     }
 
@@ -105,6 +117,10 @@ public class Chunk implements Drawable, Tickable {
                 rightNeighbor = chunk;
                 break;
         }
+    }
+
+    public boolean isReachable() {
+        return reachable;
     }
 
     public Chunk getNeighborChunk(Direction direction) {
@@ -234,6 +250,22 @@ public class Chunk implements Drawable, Tickable {
             creatures.forEach((key, c) -> c.Draw(canvas));
             gl.glTranslatef(-position.x * size, -position.y * size, 0);
         }
+    }
+
+    public Tile getRandomReachableTile() {
+        int randTile = new Random().nextInt(reachableTiles);
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles.length; j++) {
+                if (tiles[i][j].isReachable()) {
+                    if (randTile == 0) {
+                        return tiles[i][j];
+                    }
+                    randTile--;
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
