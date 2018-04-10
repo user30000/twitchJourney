@@ -73,6 +73,10 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         return name;
     }
 
+    public String getHealthText() {
+        return String.valueOf(Health) + "/" + String.valueOf(MaxHealth);
+    }
+
     public boolean isPlayer() {
         return this.Type.equals("Player");
     }
@@ -205,6 +209,10 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     @Override
     public Point getPosition() {
         return position;
+    }
+
+    public Point getParentChunkPosition() {
+        return parentChuck.getPosition();
     }
 
     public Point getGlobalPosition() {

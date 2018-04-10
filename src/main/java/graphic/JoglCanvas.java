@@ -5,6 +5,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import game.GameEventListener;
 import game.Map.Point;
@@ -13,6 +14,7 @@ import game.creatures.Player;
 import util.Prop;
 import util.Rect;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class JoglCanvas extends GLCanvas implements GLEventListener, graphListener {
@@ -23,6 +25,9 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
     private int mapSize;
     private boolean globalCamera;
+
+    private int windowHeight;
+    private int windowWidth;
 
     ArrayList<myVertex> vertexes;
     private GameEventListener gameEventListener;
@@ -47,6 +52,9 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         vertexes.add(new myVertex(5, -5));
         vertexes.add(new myVertex(-5, 5));
         vertexes.add(new myVertex(-5, -5));
+
+        windowHeight = height;
+        windowWidth = width;
     }
 
     public void init(GLAutoDrawable drawable) {
@@ -88,6 +96,8 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL gl = drawable.getGL();
         gl.glViewport(0, 0, width, height);
+        windowHeight = height;
+        windowWidth = width;
     }
 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
@@ -100,6 +110,8 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         if (focusedCreature != null) {
             setCamera(focusedCreature.getGlobalPosition());
+            if(focusedCreature.isDead())
+                focusedCreature = null;
         }
 
         if (!globalCamera) {//global camera show all map
@@ -133,6 +145,25 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         gl.glVertex2d(camera.getLeft(), camera.getUp());
 
         gl.glEnd();
+
+
+        try {
+            TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 12));
+            textRenderer.beginRendering(windowWidth, windowHeight);
+            textRenderer.setColor(Color.YELLOW);
+            textRenderer.setSmoothing(true);
+            if (focusedCreature != null) {
+                textRenderer.draw(focusedCreature.getName(), 0, windowHeight - 12);
+                textRenderer.draw(focusedCreature.getGlobalPosition().toString(), 0, windowHeight - 24);
+                textRenderer.draw("Parent chunk - " + focusedCreature.getParentChunkPosition().toString(), 0, windowHeight - 36);
+                textRenderer.setColor(Color.RED);
+                textRenderer.draw(focusedCreature.getHealthText(), 0, windowHeight - 48);
+                //textRenderer.draw(focusedCreature.);
+            }
+            textRenderer.endRendering();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private void setCamera(Point point) {
@@ -177,6 +208,8 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
                 break;
 
             case "setFocusedCreature":
+                if(focusedCreature != null)
+                    return;
                 if (sender.getClass() == Creature.class || sender.getClass() == Player.class) {
                     //setCamera((Point) sender);
                     if (focusedCreature == null && Prop.getBoolean("focusPlayer")) {
