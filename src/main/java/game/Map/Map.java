@@ -1,10 +1,11 @@
 package game.Map;
 
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import game.GameEventListener;
 import game.Tickable;
 import graphic.Drawable;
 import graphic.JoglCanvas;
-import util.Direction;
 import util.Prop;
 
 import java.util.Random;
@@ -14,8 +15,9 @@ public class Map implements Drawable, Tickable {
 
     private int size;
     private int chunkSize;
-    private Chunk[][] chunks;
+    //private Chunk[][] chunks;
     private int[][] heightMap;
+    private Tile[][] tileSet;
 
     private Random r;
 
@@ -27,7 +29,8 @@ public class Map implements Drawable, Tickable {
         r = new Random(500);
 
         heightMap = new int[size][size];
-        chunks = new Chunk[size / chunkSize][size / chunkSize];
+        tileSet = new Tile[size][size];
+        //chunks = new Chunk[size / chunkSize][size / chunkSize];
 
         heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] = heightMap[size - 1][size - 1] = 30;//r.nextInt(128);
         heightMap[size / 2 - 1][0] = 128;
@@ -36,7 +39,13 @@ public class Map implements Drawable, Tickable {
         generateHorizontalBorders(0, size - 1);
         generate(0, 0, size - 1, size - 1);
 
-        for (int i = 0; i < size / chunkSize; i++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                tileSet[i][j] = new Tile(heightMap[i][j]);
+            }
+        }
+
+        /*for (int i = 0; i < size / chunkSize; i++) {
             for (int j = 0; j < size / chunkSize; j++) {
                 chunks[i][j] = new Chunk(i, j, gameEventListener);
             }
@@ -82,7 +91,7 @@ public class Map implements Drawable, Tickable {
             for (int j = 0; j < chunks.length; j++) {
                 chunks[i][j].setTilesNeighbors();
             }
-        }
+        }*/
     }
 
     private void generateVerticalBorders(int x, int y) {
@@ -141,14 +150,63 @@ public class Map implements Drawable, Tickable {
 
     }
 
-    public Chunk getChunk(int x, int y) {
+    /*public Chunk getChunk(int x, int y) {
         return chunks[x][y];
-    }
+    }*/
 
     @Override
     public void Draw(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (gl != null) {// && canvas.inCameraRect(new Rect(position.x * size, position.y * size, position.x * size + size, position.y * size + size))) {
+            gl.glBegin(GL.GL_TRIANGLES);
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    float h = tileSet[i][j].getHeight();
 
-        for (Chunk[] chunk : chunks) {
+                    switch (tileSet[i][j].getType()) {
+                        case 0:
+                            gl.glColor3f((h + 64) / 128, (h + 64) / 128, 0f);
+                            break;
+                        case 1:
+                            gl.glColor3f(h / 128, h / 128, h / 128);
+                            break;
+                        case 2:
+                            gl.glColor3f(0f, h / 128, 0f);
+                            break;
+                        case 3:
+                            gl.glColor3f(0f, 0f, (h + 64) / 128);
+                            break;
+                    }
+
+                    gl.glTexCoord2f(0.0625f, 1);
+                    gl.glVertex2i(i, j);
+
+                    gl.glTexCoord2f(0.0625f, 1 - 0.0625f);
+                    gl.glVertex2i(i, j - 1);
+
+                    gl.glTexCoord2f(0, 1 - 0.0625f);
+                    gl.glVertex2i(i - 1, j - 1);
+
+
+                    gl.glTexCoord2f(0.0625f, 1);
+                    gl.glVertex2i(i, j);
+
+                    gl.glTexCoord2f(0, 1);
+                    gl.glVertex2i(i - 1, j);
+
+                    gl.glTexCoord2f(0, 1 - 0.0625f);
+                    gl.glVertex2i(i - 1, j - 1);
+                }
+            }
+            gl.glEnd();
+        }
+
+        /*for (Chunk[] chunk : chunks) {
             for (int j = 0; j < chunks.length; j++) {
                 chunk[j].Draw(canvas);
             }
@@ -158,12 +216,12 @@ public class Map implements Drawable, Tickable {
             for (int j = 0; j < chunks.length; j++) {
                 chunk[j].DrawCreatures(canvas);
             }
-        }
+        }*/
     }
 
     @Override
     public void Tick() {
-        for (Chunk[] chunk : chunks) {
+        /*for (Chunk[] chunk : chunks) {
             for (int i = 0; i < chunks.length; i++) {
                 chunk[i].Tick();
             }
@@ -174,5 +232,6 @@ public class Map implements Drawable, Tickable {
                 chunk[i].resetCreatures();
             }
         }
+        */
     }
 }
