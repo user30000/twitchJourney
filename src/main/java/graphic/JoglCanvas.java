@@ -70,7 +70,9 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
         glu.gluOrtho2D(camera.getBottom(), camera.getUp(), camera.getLeft(), camera.getRight());
 
         gl.glClearDepth(10.0f); // Set depth's clear-value to farthest
-        gl.glEnable(GL2.GL_DEPTH_TEST); // Enables depth-buffer for hidden
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDepthMask(false);
+        //gl.glEnable(GL2.GL_DEPTH_TEST); // Enables depth-buffer for hidden
         // surface removal
         //gl.glDepthFunc(GL2.GL_LEQUAL); // The type of depth testing to do
         //gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);   // nice perspective view, avoid texture distortion.
@@ -110,7 +112,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
 
         if (focusedCreature != null) {
             setCamera(focusedCreature.getGlobalPosition());
-            if(focusedCreature.isDead())
+            if (focusedCreature.isDead())
                 focusedCreature = null;
         }
 
@@ -155,7 +157,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
             if (focusedCreature != null) {
                 textRenderer.draw(focusedCreature.getName(), 0, windowHeight - 12);
                 textRenderer.draw(focusedCreature.getGlobalPosition().toString(), 0, windowHeight - 24);
-                textRenderer.draw("Parent chunk - " + focusedCreature.getParentChunkPosition().toString(), 0, windowHeight - 36);
+                //textRenderer.draw("Parent chunk - " + focusedCreature.getParentChunkPosition().toString(), 0, windowHeight - 36);
                 textRenderer.setColor(Color.RED);
                 textRenderer.draw(focusedCreature.getHealthText(), 0, windowHeight - 48);
                 //textRenderer.draw(focusedCreature.);
@@ -167,7 +169,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
     }
 
     private void setCamera(Point point) {
-        float cameraSize = 20;
+        float cameraSize = 10;
         camera = new Rect(point.x - cameraSize, point.y - cameraSize, point.x + cameraSize, point.y + cameraSize);
     }
 
@@ -208,7 +210,7 @@ public class JoglCanvas extends GLCanvas implements GLEventListener, graphListen
                 break;
 
             case "setFocusedCreature":
-                if(focusedCreature != null)
+                if (focusedCreature != null)
                     return;
                 if (sender.getClass() == Creature.class || sender.getClass() == Player.class) {
                     //setCamera((Point) sender);

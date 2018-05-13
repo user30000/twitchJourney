@@ -157,13 +157,13 @@ public class Chunk implements Drawable, Tickable {
     }
 
     public synchronized void creatureRoaming(String creatureName, Direction direction) {
-        creatures.get(creatureName).setParentChuck(getNeighborChunk(direction));
-        creatureFactory.getRoamingcreature(creatures.get(creatureName));
+        //creatures.get(creatureName).setParentChuck(getNeighborChunk(direction));
+        //creatureFactory.getRoamingcreature(creatures.get(creatureName));
     }
 
-    void resetCreatures() {
+    /*void resetCreatures() {
         creatureFactory.resetCreatures(creatures, this);
-    }
+    }*/
 
     public List<Creature> getPlayersList() {
         List<Creature> players = new ArrayList<>();
@@ -272,9 +272,9 @@ public class Chunk implements Drawable, Tickable {
     public void Tick() {
         creatures.forEach((key, c) -> c.Tick());
 
-        creatureFactory.CleanDead(creatures, this);
+        //creatureFactory.CleanDead(creatures, this);
         if (spawner) {
-            creatureFactory.SavePopulationPlayer(creatures, this, gameEventListener);
+            //creatureFactory.SavePopulationPlayer(creatures, this, gameEventListener);
         }
     }
 }

@@ -2,20 +2,21 @@ package game.Map;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import game.Game;
 import game.GameEventListener;
 import game.Tickable;
 import graphic.Drawable;
 import graphic.JoglCanvas;
-import util.Prop;
+import util.Direction;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class Map implements Drawable, Tickable {
     private GameEventListener gameEventListener;
 
     private int size;
-    private int chunkSize;
-    //private Chunk[][] chunks;
     private int[][] heightMap;
     private Tile[][] tileSet;
 
@@ -25,73 +26,53 @@ public class Map implements Drawable, Tickable {
         this.gameEventListener = gameEventListener;
 
         this.size = size;
-        chunkSize = Prop.getInt("chunkSize");
-        r = new Random(500);
+        r = new Random(1);
 
-        heightMap = new int[size][size];
+        heightMap = new int[size + 1][size + 1];
         tileSet = new Tile[size][size];
-        //chunks = new Chunk[size / chunkSize][size / chunkSize];
 
-        heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] = heightMap[size - 1][size - 1] = 30;//r.nextInt(128);
-        heightMap[size / 2 - 1][0] = 128;
+        heightMap[0][0] = heightMap[0][size] = heightMap[size][0] = heightMap[size][size] = 15;//r.nextInt(100);
+        heightMap[(size + 1) / 2][(size + 1) / 2] = 0;
 
-        generateVerticalBorders(0, size - 1);
-        generateHorizontalBorders(0, size - 1);
-        generate(0, 0, size - 1, size - 1);
+        generateVerticalBorders(0, size);
+        generateHorizontalBorders(0, size);
+        generate(0, 0, size, size);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 tileSet[i][j] = new Tile(heightMap[i][j]);
+                tileSet[i][j].setPosition(i, j);
             }
         }
 
-        /*for (int i = 0; i < size / chunkSize; i++) {
-            for (int j = 0; j < size / chunkSize; j++) {
-                chunks[i][j] = new Chunk(i, j, gameEventListener);
-            }
-        }
+        setTilesNeighbors();
+    }
 
-        for (int i = 0; i < chunks.length; i++) {
-            for (int j = 0; j < chunks.length; j++) {
-                if (i != chunks.length - 1) {
-                    chunks[i][j].setNeighborChunk(chunks[i + 1][j], Direction.RIGHT);
+    private void setTilesNeighbors() {
+        for (int i = 0; i < tileSet.length; i++) {
+            for (int j = 0; j < tileSet.length; j++) {
+                if (i != tileSet.length - 1) {
+                    tileSet[i][j].setNeighborTile(tileSet[i + 1][j], Direction.RIGHT);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[0][j], Direction.RIGHT);
+                    tileSet[i][j].setNeighborTile(tileSet[0][j], Direction.RIGHT);
                 }
                 if (i != 0) {
-                    chunks[i][j].setNeighborChunk(chunks[i - 1][j], Direction.LEFT);
+                    tileSet[i][j].setNeighborTile(tileSet[i - 1][j], Direction.LEFT);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[chunks.length - 1][j], Direction.LEFT);
+                    tileSet[i][j].setNeighborTile(tileSet[tileSet.length - 1][j], Direction.LEFT);
                 }
-                if (j != chunks.length - 1) {
-                    chunks[i][j].setNeighborChunk(chunks[i][j + 1], Direction.UP);
+                if (j != tileSet.length - 1) {
+                    tileSet[i][j].setNeighborTile(tileSet[i][j + 1], Direction.UP);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[i][0], Direction.UP);
+                    tileSet[i][j].setNeighborTile(tileSet[i][0], Direction.UP);
                 }
                 if (j != 0) {
-                    chunks[i][j].setNeighborChunk(chunks[i][j - 1], Direction.DOWN);
+                    tileSet[i][j].setNeighborTile(tileSet[i][j - 1], Direction.DOWN);
                 } else {
-                    chunks[i][j].setNeighborChunk(chunks[i][chunks.length - 1], Direction.DOWN);
+                    tileSet[i][j].setNeighborTile(tileSet[i][tileSet.length - 1], Direction.DOWN);
                 }
             }
         }
-
-        for (int i = 0; i < chunks.length; i++) {
-            for (int j = 0; j < chunks.length; j++) {
-                Tile[][] tileSet = new Tile[chunkSize][chunkSize];
-                for (int k = 0; k < chunkSize; k++) {
-                    for (int l = 0; l < chunkSize; l++) {
-                        tileSet[k][l] = new Tile(heightMap[i * chunkSize + k][j * chunkSize + l]);
-                    }
-                }
-                chunks[i][j].setTiles(tileSet);
-            }
-        }
-        for (int i = 0; i < chunks.length; i++) {
-            for (int j = 0; j < chunks.length; j++) {
-                chunks[i][j].setTilesNeighbors();
-            }
-        }*/
     }
 
     private void generateVerticalBorders(int x, int y) {
@@ -102,7 +83,7 @@ public class Map implements Drawable, Tickable {
         int noise = Math.min(diff, 64);
 
         if (heightMap[0][(x + y) / 2] == 0) {
-            heightMap[size - 1][(x + y) / 2] = heightMap[0][(x + y) / 2] = (heightMap[0][x] + heightMap[0][y]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
+            heightMap[size][(x + y) / 2] = heightMap[0][(x + y) / 2] = (heightMap[0][x] + heightMap[0][y]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
         }
         generateVerticalBorders(x, (y + x) / 2);
         generateVerticalBorders((y + x) / 2, y);
@@ -116,7 +97,7 @@ public class Map implements Drawable, Tickable {
         int noise = Math.min(diff, 64);
 
         if (heightMap[(x + y) / 2][0] == 0) {
-            heightMap[(x + y) / 2][size - 1] = heightMap[(x + y) / 2][0] = (heightMap[x][0] + heightMap[y][0]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
+            heightMap[(x + y) / 2][size] = heightMap[(x + y) / 2][0] = (heightMap[x][0] + heightMap[y][0]) / 2 + (r.nextInt(noise) - noise / 2);//bottom
         }
         generateHorizontalBorders(x, (x + y) / 2);
         generateHorizontalBorders((x + y) / 2, y);
@@ -148,6 +129,25 @@ public class Map implements Drawable, Tickable {
         generate(i1, i2 + diff / 2, i3 - diff / 2, i4);//низ право
         generate(i1 + diff / 2, i2 + diff / 2, i3, i4);//верх право
 
+    }
+
+    public List<Direction> getPointFreeNeighbors(Point point) {
+        LinkedList<Direction> neighbors = new LinkedList<>();
+        Tile tile = tileSet[point.x][point.y];//tileSet[point.x % size][point.y % size];
+
+        if (tile.getNeighborTile(Direction.RIGHT).isReachable()) {
+            neighbors.add(Direction.RIGHT);
+        }
+        if (tile.getNeighborTile(Direction.UP).isReachable()) {
+            neighbors.add(Direction.UP);
+        }
+        if (tile.getNeighborTile(Direction.LEFT).isReachable()) {
+            neighbors.add(Direction.LEFT);
+        }
+        if (tile.getNeighborTile(Direction.DOWN).isReachable()) {
+            neighbors.add(Direction.DOWN);
+        }
+        return neighbors;
     }
 
     /*public Chunk getChunk(int x, int y) {
@@ -184,54 +184,45 @@ public class Map implements Drawable, Tickable {
                     }
 
                     gl.glTexCoord2f(0.0625f, 1);
-                    gl.glVertex2i(i, j);
+                    gl.glVertex2i(i + 1, j + 1);
 
                     gl.glTexCoord2f(0.0625f, 1 - 0.0625f);
-                    gl.glVertex2i(i, j - 1);
+                    gl.glVertex2i(i + 1, j);
 
                     gl.glTexCoord2f(0, 1 - 0.0625f);
-                    gl.glVertex2i(i - 1, j - 1);
+                    gl.glVertex2i(i, j);
 
 
                     gl.glTexCoord2f(0.0625f, 1);
-                    gl.glVertex2i(i, j);
+                    gl.glVertex2i(i + 1, j + 1);
 
                     gl.glTexCoord2f(0, 1);
-                    gl.glVertex2i(i - 1, j);
+                    gl.glVertex2i(i, j + 1);
 
                     gl.glTexCoord2f(0, 1 - 0.0625f);
-                    gl.glVertex2i(i - 1, j - 1);
+                    gl.glVertex2i(i, j);
                 }
             }
             gl.glEnd();
         }
 
-        /*for (Chunk[] chunk : chunks) {
-            for (int j = 0; j < chunks.length; j++) {
-                chunk[j].Draw(canvas);
-            }
-        }
+        DrawCreatures(canvas);
+    }
 
-        for (Chunk[] chunk : chunks) {
-            for (int j = 0; j < chunks.length; j++) {
-                chunk[j].DrawCreatures(canvas);
-            }
-        }*/
+    private void DrawCreatures(JoglCanvas canvas) {
+        GL2 gl = null;
+        try {
+            gl = canvas.getGl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (gl != null) {
+            ((Game) gameEventListener).getCreatures().forEach((key, c) -> c.Draw((canvas)));
+        }
     }
 
     @Override
     public void Tick() {
-        /*for (Chunk[] chunk : chunks) {
-            for (int i = 0; i < chunks.length; i++) {
-                chunk[i].Tick();
-            }
-        }
 
-        for (Chunk[] chunk : chunks) {
-            for (int i = 0; i < chunks.length; i++) {
-                chunk[i].resetCreatures();
-            }
-        }
-        */
     }
 }

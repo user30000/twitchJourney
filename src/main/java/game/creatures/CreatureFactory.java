@@ -2,7 +2,6 @@ package game.creatures;
 
 import chatBot.outMessageListener;
 import game.GameEventListener;
-import game.Map.Chunk;
 import util.Prop;
 
 import java.util.*;
@@ -25,11 +24,11 @@ public class CreatureFactory {
         chat = outMsg;
     }
 
-    public void getRoamingcreature(Creature creature) {
+    /*public void getRoamingcreature(Creature creature) {
         roamingList.add(creature);
-    }
+    }*/
 
-    public void resetCreatures(Map<String, Creature> creatures, Chunk parentChunk) {
+    /*public void resetCreatures(Map<String, Creature> creatures) {
         roamingList.forEach(c -> {
             if (c.parentChuck == parentChunk) {
                 creatures.put(c.getName(), c);
@@ -38,19 +37,19 @@ public class CreatureFactory {
         });
 
         roamingList.removeIf(c -> c.parentChuck == parentChunk);
-    }
+    }*/
 
-    public void SavePopulationPlayer(Map<String, Creature> creatures, Chunk parentChunk, GameEventListener listener) {
+    public void SavePopulationPlayer(Map<String, Creature> creatures, GameEventListener listener) {
         counterTick++;
 
         List<Creature> added = new ArrayList<>();
 
         if (counterTick == 5 && playerCount < playersMaximum) {
-            added.add(this.createPlayer(parentChunk));
+            added.add(this.createPlayer());
         }
 
         if (creatureCount < creaturesMaximum) {
-            added.add(this.createCreature(parentChunk));
+            added.add(this.createCreature());
         }
 
         added.forEach((c) -> {
@@ -66,7 +65,7 @@ public class CreatureFactory {
         }
     }
 
-    public void CleanDead(Map<String, Creature> creatures, Chunk parentChunk) {
+    public void CleanDead(Map<String, Creature> creatures) {
         creatures.entrySet().removeIf(e -> {
             Creature c = e.getValue();
             if (c.isDead()) {
@@ -80,23 +79,20 @@ public class CreatureFactory {
                 }
                 return true;
             }
-            if(c.parentChuck != parentChunk){
-                return true;
-            }
             return false;
         });
     }
 
-    private Creature createPlayer(Chunk chunk) {
+    private Creature createPlayer() {
         playerCount++;
         String Name = "Чувачок" + String.valueOf(new Random().nextInt());
-        return new Player(Name, chunk);
+        return new Player(Name, null);
     }
 
-    private Creature createCreature(Chunk chunk) {
+    private Creature createCreature() {
         String Name = "Монстряш" + String.valueOf(new Random().nextInt());
         creatureCount++;
-        Creature c = new Creature(15, "zombie", Name, chunk);
+        Creature c = new Creature(15, "zombie", Name);
         c.setTextureName("zombie");
         return c;
     }

@@ -3,8 +3,8 @@ package game.creatures;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+import game.Game;
 import game.GameEventListener;
-import game.Map.Chunk;
 import game.Map.Point;
 import game.Map.Tile;
 import game.Tickable;
@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class Creature extends FunctionalFiniteStateMachine implements Tickable, Drawable, target {
     private Random r;
-    protected Chunk parentChuck;
+    //protected Chunk parentChuck;
 
     protected int sightRange = 3;
 
@@ -53,16 +53,16 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     protected int Age = 0;
     protected boolean dead = false;
 
-    public Creature(int MaxHealth, String Type, String NickName, Chunk Parent) {
+    public Creature(int MaxHealth, String Type, String NickName) {
         super("IdleState");
         this.MaxHealth = MaxHealth;
         this.Health = MaxHealth;
         this.Type = Type;
         this.name = NickName;
         this.r = new Random();
-        this.parentChuck = Parent;
+        //this.parentChuck = Parent;
 
-        position = parentChuck.getRandomReachableTile().position;
+        position = new Point(r.nextInt(64), r.nextInt(64));//parentChuck.getRandomReachableTile().position;
     }
 
     public void setTextureName(String textureName) {
@@ -103,9 +103,9 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         gameEventListener = null;
     }
 
-    public void setParentChuck(Chunk chuck) {
+    /*public void setParentChuck(Chunk chuck) {
         parentChuck = chuck;
-    }
+    }*/
 
 
     public boolean isDead() {
@@ -123,7 +123,7 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         if (gameEventListener == null)
             return Do.nothing();
 
-        List<Creature> players = parentChuck.getPlayersList();
+        List<Creature> players = ((Game) gameEventListener).getPlayersList();//parentChuck.getPlayersList();
 
         if (Target == null) {
             for (Creature p : players) {
@@ -138,34 +138,34 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
     }
 
     public Do RoamState() {
-        List<Direction> neighbors = parentChuck.getPointFreeNeighbors(getGlobalPosition());
+        List<Direction> neighbors = ((Game) gameEventListener).getMap().getPointFreeNeighbors(getGlobalPosition());//parentChuck.getPointFreeNeighbors(getGlobalPosition());
         if (neighbors.size() <= 0)
             return Do.swap_to("IdleState");
 
         // Get random neighbors (tile)
         position.move(neighbors.get(new Random().nextInt(neighbors.size())));
         //position = x;
-        Direction d = null;
-        int chunkSize = Prop.getInt("chunkSize");
+       // Direction d = null;
+        int chunkSize = Prop.getInt("mapSize");
         if (position.x < 0) {
-            d = Direction.LEFT;
+            //d = Direction.LEFT;
             position.x += chunkSize;
         }
         if (position.x >= chunkSize) {
-            d = Direction.RIGHT;
+            //d = Direction.RIGHT;
             position.x -= chunkSize;
         }
         if (position.y < 0) {
-            d = Direction.DOWN;
+            //d = Direction.DOWN;
             position.y += chunkSize;
         }
         if (position.y >= chunkSize) {
-            d = Direction.UP;
+            //d = Direction.UP;
             position.y -= chunkSize;
         }
-        if (d != null) {
+        /*if (d != null) {
             parentChuck.creatureRoaming(this.name, d);
-        }
+        }*/
 
         if (Target == null) {
             return Do.swap_to("IdleState");
@@ -211,15 +211,15 @@ public class Creature extends FunctionalFiniteStateMachine implements Tickable, 
         return position;
     }
 
-    public Point getParentChunkPosition() {
+    /*public Point getParentChunkPosition() {
         return parentChuck.getPosition();
-    }
+    }*/
 
     public Point getGlobalPosition() {
-        Point parentPosition = parentChuck.getPosition();
-        int x = parentPosition.x * Prop.getInt("chunkSize") + position.x;
-        int y = parentPosition.y * Prop.getInt("chunkSize") + position.y;
-        return new Point(x, y);
+        //Point parentPosition = parentChuck.getPosition();
+        //int x = parentPosition.x * Prop.getInt("chunkSize") + position.x;
+        //int y = parentPosition.y * Prop.getInt("chunkSize") + position.y;
+        return position;//new Point(x, y);
     }
 
     @Override

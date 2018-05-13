@@ -17,6 +17,8 @@ public class twitchJourney {
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\DR07C.png", "mapTexture");
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\warrior_1.png", "warrior");
             TexturePool.getInstance().declareTexture("D:\\projects\\program\\zombie_1.png", "zombie");
+            TexturePool.getInstance().declareTexture("D:\\projects\\program\\bodies.png", "bodies");
+            TexturePool.getInstance().declareTexture("D:\\projects\\program\\Archer.png", "archer");
         } catch (Exception e) {
             System.out.println(e.toString());
         }

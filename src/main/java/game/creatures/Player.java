@@ -3,6 +3,7 @@ package game.creatures;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+import game.Game;
 import game.Map.Chunk;
 import game.target;
 import graphic.JoglCanvas;
@@ -26,12 +27,16 @@ public class Player extends Creature implements target {
     private int Will;
     private int Luck = 1;
 
+    private int body;
+
     private Player(int MaxHealth, String nickName, Chunk parent) {
-        super(MaxHealth, "Player", nickName, parent);
+        super(MaxHealth, "Player", nickName);//, parent);
         NickName = nickName.toLowerCase();
         Level = 1;
 
         Armor = 2;
+
+        body = new Random().nextInt(2);
     }
 
     public Player(String nickName, Chunk parent) {
@@ -70,7 +75,7 @@ public class Player extends Creature implements target {
         if (gameEventListener == null)
             return Do.nothing();
 
-        List<Creature> players = parentChuck.getCreatureList();
+        List<Creature> players = ((Game) gameEventListener).getCreatureList();//parentChuck.getCreatureList();
 
         if (Target == null) {
             for (Creature p : players) {
@@ -94,6 +99,7 @@ public class Player extends Creature implements target {
         if (new Random().nextInt(1000) == 0) {
             gameEventListener.GameEvent(this, "focusCreature");
         }
+
         return super.RoamState();
     }
 
@@ -105,28 +111,53 @@ public class Player extends Creature implements target {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        gl.glColor3f(1f, 1f, 1f);
-        Texture t = TexturePool.getInstance().getTexture("warrior");
+        gl.glColor3f(1f, 1f, 0f);
+        //Texture t = TexturePool.getInstance().getTexture("bodies");
+        Texture t = TexturePool.getInstance().getTexture("bodies");
+
         if (t != null) {
             gl.glBindTexture(GL.GL_TEXTURE_2D, t.getTextureObject());
             gl.glEnable(GL.GL_BLEND);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+            //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glBlendFuncSeparate(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA, GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
         }
-        gl.glBegin(GL2.GL_POLYGON);
-        //gl.glEnable(GL2.GL_TEXTURE_2D);
 
-        gl.glTexCoord2f(1, 1);
+        gl.glBegin(GL2.GL_POLYGON);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        //drawHead
+        gl.glColor3f(1f, 0f, 0f);
+        gl.glTexCoord2f(0.5f, 0.5f);
         gl.glVertex3i(position.x, position.y, 1);
 
-        gl.glTexCoord2f(1, 0);
+        gl.glColor3f(0f, 0f, 0f);
+        gl.glTexCoord2f(0.5f, 0);
         gl.glVertex3i(position.x, position.y - 1, 1);
 
+        gl.glColor3f(1f, 1f, 0f);
         gl.glTexCoord2f(0, 0);
         gl.glVertex3i(position.x - 1, position.y - 1, 1);
 
-        gl.glTexCoord2f(0, 1);
+        gl.glColor3f(1f, 0f, 1f);
+        gl.glTexCoord2f(0, 0.5f);
         gl.glVertex3i(position.x - 1, position.y, 1);
 
+        gl.glEnd();
+
+        gl.glColor3f(1f, 0f, 0f);
+        gl.glBegin(GL2.GL_POLYGON);
+        //gl.glEnable(GL2.GL_TEXTURE_2D);
+
+        gl.glTexCoord2f((body + 1) * 0.5f, 1);
+        gl.glVertex3i(position.x, position.y, 1);
+
+        gl.glTexCoord2f((body + 1) * 0.5f, 0.5f);
+        gl.glVertex3i(position.x, position.y - 1, 1);
+
+        gl.glTexCoord2f((body) * 0.5f, 0.5f);
+        gl.glVertex3i(position.x - 1, position.y - 1, 1);
+
+        gl.glTexCoord2f((body) * 0.5f, 1);
+        gl.glVertex3i(position.x - 1, position.y, 1);
         gl.glEnd();
     }
 

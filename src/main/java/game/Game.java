@@ -46,11 +46,31 @@ public class Game implements Runnable, GameEventListener {
         return players;
     }
 
+    public List<Creature> getCreatureList() {
+        List<Creature> creatureArrayList = new ArrayList<>();
+        creatures.forEach((key, c) -> {
+            if (!c.isPlayer()) {
+                creatureArrayList.add(c);
+            }
+        });
+        return creatureArrayList;
+    }
+
+    public java.util.Map<String, Creature> getCreatures() {
+        return creatures;
+    }
+
+    public Map getMap() {
+        return gameMap;
+    }
+
     @Override
     public void run() {
         while (true) {
-            gameMap.Tick();
-
+            //gameMap.Tick();
+            creatureFactory.SavePopulationPlayer(creatures, this);
+            creatures.forEach((key, c) -> c.Tick());
+            creatureFactory.CleanDead(creatures);
             Utils.sleep(Prop.getInt("tickDelay"));
         }
     }
@@ -61,7 +81,7 @@ public class Game implements Runnable, GameEventListener {
             case "Draw":
                 if (sender.getClass() == JoglCanvas.class) {
                     try {
-                        gameMap.Draw((JoglCanvas)sender);
+                        gameMap.Draw((JoglCanvas) sender);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
